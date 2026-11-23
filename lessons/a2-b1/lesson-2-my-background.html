@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 2 Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column per screen, big type for screen sharing, step bar on top.
+   Colour: cool paper and ink, blue for actions, yellow = past simple verbs, mint = new words. */
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --hl:#ffe45c; --hl-ink:#17202e; --vocab:#b4ead9; --vocab-ink:#0d3a2e; --now:#dbe4ff;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+    --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52;
+    --hl:#5d4c00; --hl-ink:#ffe98a; --vocab:#1c5a4c; --vocab-ink:#c3f6e7; --now:#23325c;
+    --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5}
+.wrap{max-width:940px;margin:0 auto;padding:20px 16px 72px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* step bar */
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:0;list-style:none}
+.steps button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px 6px 8px;font-size:.9rem}
+.steps .n{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:.8rem;font-weight:700}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps button[aria-current="step"] .n{background:rgba(255,255,255,.22);color:inherit}
+.audiobar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin:0 0 6px;font-size:.88rem;color:var(--muted)}
+.audiobar .ctl{display:flex;align-items:center;gap:8px;min-width:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:4px 12px;font-size:.88rem}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+select{font:inherit;font-size:.88rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 8px;max-width:100%;min-width:0}
+.warn{margin:8px 0;padding:10px 14px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:.95rem}
+.soft{margin:8px 0;padding:8px 14px;border-radius:10px;background:var(--accent-soft);color:var(--ink);font-size:.9rem}
+
+.eyebrow{margin:18px 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+h2{margin:36px 0 6px;font-size:1.3rem;font-weight:700}
+.lead{margin:12px 0 0;color:var(--muted);max-width:62ch}
+.hint{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+.small{font-size:.85rem;color:var(--muted)}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:.9rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg,.play svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--muted)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+
+/* marks */
+mark.g,mark.w{background:transparent;color:inherit;padding:0}
+.hl-g mark.g{background:var(--hl);color:var(--hl-ink);padding:1px 4px;border-radius:4px}
+.hl-w mark.w{background:var(--vocab);color:var(--vocab-ink);padding:1px 4px;border-radius:4px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:14px 0 6px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.legend label{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:.95rem}
+.legend input{width:20px;height:20px;accent-color:var(--accent)}
+.sw{display:inline-block;padding:1px 10px;border-radius:4px;font-weight:500}
+.sw.g{background:var(--hl);color:var(--hl-ink)}
+.sw.w{background:var(--vocab);color:var(--vocab-ink)}
+
+/* text cards */
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+.avatar{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:1.15rem}
+.who h3{margin:0;font-size:1.15rem;line-height:1.2}
+.role{margin:0;color:var(--muted);font-size:.9rem}
+.play{display:inline-flex;align-items:center;gap:10px;border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:10px 20px 10px 16px;font-weight:700}
+.passage{margin:0;font-family:var(--font-text);font-size:clamp(1.15rem,2.3vw,1.4rem);line-height:1.85}
+.s{border-radius:6px;padding:2px 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-color .15s}
+.s:hover{text-decoration:underline dotted;text-underline-offset:4px}
+.s.now{background:var(--now)}
+.words{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.wflip{perspective:900px;cursor:pointer;border-radius:14px}
+.wflip-in{display:grid;transition:transform .45s;transform-style:preserve-3d}
+.wflip-in.on{transform:rotateY(180deg)}
+.wf{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:84px;padding:12px 14px;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--vocab);color:var(--vocab-ink)}
+.wf b{font-size:1.25rem}
+.wback{transform:rotateY(180deg);background:var(--accent-soft);color:var(--ink,inherit);border:1px solid var(--line)}
+.wback b{font-size:1.1rem}
+
+/* gap lists */
+.gl-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.gl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.gl-main{display:flex;gap:14px;align-items:baseline}
+.num{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;transform:translateY(-2px)}
+.gl-text{margin:0;font-family:var(--font-text);font-size:clamp(1.2rem,2.5vw,1.5rem);line-height:2}
+.gl-text .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+input.gap{font:inherit;font-family:var(--font-text);color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:0 8px;margin:0 4px;text-align:center;min-width:3em;max-width:100%}
+input.gap.ok{border-bottom-color:var(--ok);background:var(--ok-soft)}
+input.gap.bad{border-bottom-color:var(--bad);background:var(--bad-soft)}
+.gl-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 0 42px}
+.answer{margin:14px 0 0 42px;padding-top:14px;border-top:1px dashed var(--line)}
+.answer .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.answer p{margin:6px 0}
+.fix{font-family:var(--font-text);font-size:1.15rem}
+.why{color:var(--muted);font-size:.98rem}
+.res{font-size:.9rem;font-weight:500}
+
+/* flip decks */
+.deckbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.flip{perspective:1400px;cursor:pointer;border-radius:18px}
+.flip-inner{display:grid;transition:transform .5s;transform-style:preserve-3d}
+.flip-inner.on{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 26px 26px;min-height:300px}
+.face.back{transform:rotateY(180deg);background:var(--accent-soft)}
+.face .tag{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.face ol{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.face li{font-family:var(--font-text);font-size:clamp(1.2rem,2.4vw,1.5rem);line-height:1.5}
+.face li .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+.blank{display:inline-block;border-bottom:2px solid var(--ink);height:1.1em;vertical-align:baseline;margin:0 3px;min-width:2.2em}
+b.ans{color:var(--accent);font-weight:700}
+.tap{margin:18px 0 0;font-size:.82rem;color:var(--muted)}
+.controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+
+/* open screen */
+.big-q{font-family:var(--font-text);font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.35;margin:0 0 14px;text-wrap:balance}
+.today{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.today li{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+
+/* table */
+.verbs{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.verbs button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 20px;font-size:1.15rem;font-weight:700}
+.verbs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.endbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:0 0 12px;font-size:1.05rem}
+.endbar .arrow{color:var(--muted)}
+.scroll{overflow-x:auto}
+table.conj{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table.conj th,table.conj td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+table.conj tr:last-child td{border-bottom:0}
+table.conj th{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+table.conj td:first-child{font-weight:700;white-space:nowrap}
+table.conj .pat{color:var(--muted)}
+table.conj .ex{font-family:var(--font-text);font-size:1.3rem}
+.note{margin:12px 0 0;padding:12px 16px;border-radius:12px;background:var(--accent-soft)}
+
+/* question cards */
+.qcard{min-height:240px;display:flex;flex-direction:column;justify-content:center}
+.qtext{font-family:var(--font-text);font-size:clamp(1.6rem,4vw,2.5rem);line-height:1.3;margin:0 0 18px;text-wrap:balance}
+
+@media (max-width:600px){
+  body{font-size:17px}
+  .card{padding:16px}
+  .face{padding:18px 16px 22px}
+  .gl{padding:14px 16px}
+  .gl-meta,.answer{margin-left:0}
+  .play{width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion: reduce){ .s,.flip-inner,.wflip-in{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap hl-g hl-w" id="app">
+  <ol class="steps" id="steps" aria-label="Lesson screens"></ol>
+  <select id="voice" hidden><option value="auto">auto</option></select>
+  <p class="warn" id="novoice" role="alert" hidden>This browser cannot speak. Open the page in Chrome.</p>
+
+  <main>
+    <!-- 1 -->
+    <section class="screen" id="s-drill" hidden>
+      <p class="eyebrow">Homework check</p>
+      <h1>Warm-up drill: present simple and present continuous</h1>
+      <p class="lead">Fill the gaps in your head, then flip the card to check. Each card shows the same verb in three types of sentence: positive, negative, question.</p>
+      <div style="margin-top:20px" id="drillDeck"></div>
+    </section>
+    <!-- 2 -->
+    <section class="screen" id="s-open" hidden>
+      <p class="eyebrow">Lesson 2</p>
+      <h1>Today: my background</h1>
+      <p class="lead">We learn to talk about the past: where we studied, where we worked and what we learned.</p>
+      <div class="card" style="margin-top:24px">
+        <p class="big-q">Do you like talking about yourself? Do you like making speeches?</p>
+        <button type="button" class="mini" data-say="Do you like talking about yourself? Do you like making speeches?" aria-pressed="false" aria-label="Listen to the question"><svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg><span class="lbl">Listen</span></button>
+      </div>
+      <div class="card">
+        <p class="big-q">Now tell me about your hobbies. What did you write at home?</p>
+      </div>
+      <h2>In this lesson</h2>
+      <ul class="today">
+        <li>Listen to three people tell about their studies and work</li>
+        <li>Past simple: regular verbs with -ed</li>
+        <li>13 useful words for an interview</li>
+        <li>Talk about your own past</li>
+      </ul>
+    </section>
+    <!-- 3 -->
+    <section class="screen" id="s-listen" hidden>
+      <p class="eyebrow">Listening</p>
+      <h1>Tell me about your experience</h1>
+      <p class="lead">Three people answer this interview question. Listen and read at the same time.</p>
+      <div id="cards"></div>
+      <h2>New words from the texts</h2>
+      <div class="words" id="newwords"></div>
+    </section>
+    <!-- 4 -->
+    <section class="screen" id="s-discuss" hidden>
+      <p class="eyebrow">Discuss</p>
+      <h1>Five sentences from the texts</h1>
+      <p class="lead">In the first three sentences a word is missing. Find it in the text or fill it in yourself. The last two sentences have a mistake. Find it.</p>
+      <ol class="gl-list" id="discussList" style="margin-top:22px"></ol>
+    </section>
+    <!-- 5 -->
+    <section class="screen" id="s-rules" hidden>
+      <p class="eyebrow">Grammar</p>
+      <h1>Past simple: regular verbs</h1>
+      <p class="lead">Pick a verb and watch the table change. The form is the same for I, you, he, she, it, we and they.</p>
+      <div class="verbs" id="verbs" role="group" aria-label="Choose a verb"></div>
+      <p class="endbar" id="endbar"></p>
+      <div class="scroll"><table class="conj"><thead><tr><th>Type</th><th>Pattern</th><th>Example</th></tr></thead>
+        <tbody id="conjBody"></tbody></table></div>
+      <p class="note"><b>After did or didn't the verb stays in the base form:</b> didn't work, not didn't worked.</p>
+      <h2>Your turn: fill the gaps</h2>
+      <p class="hint">Same verb, three types of sentence. Flip the card to check.</p>
+      <div id="pastDeck"></div>
+    </section>
+    <!-- 6 -->
+    <section class="screen" id="s-practice" hidden>
+      <p class="eyebrow">Practice</p>
+      <h1>Talking about your experience</h1>
+      <p class="lead">Fill in the gaps with the past simple. Use the verb in brackets.</p>
+      <ol class="gl-list" id="practiceList" style="margin-top:22px"></ol>
+    </section>
+    <!-- 7 -->
+    <section class="screen" id="s-talk" hidden>
+      <p class="eyebrow">Speaking</p>
+      <h1>Tell me about your past</h1>
+      <p class="lead">Answer each question in a full sentence. Use the past simple.</p>
+      <div style="margin-top:22px" id="talkDeck"></div>
+    </section>
+  </main>
+
+  <nav class="controls" style="margin-top:34px;justify-content:space-between" aria-label="Next and previous screen">
+    <button type="button" class="btn" id="prevScreen">← Back</button>
+    <button type="button" class="btn primary" id="nextScreen">Next →</button>
+  </nav>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const apo=s=>s.replace(/'/g,'’');
+const strip=s=>s.replace(/\[\[|\]\]|\{\{|\}\}/g,'');
+const mk=s=>apo(s).replace(/\[\[(.+?)\]\]/g,'<mark class="g">$1</mark>').replace(/\{\{(.+?)\}\}/g,'<mark class="w">$1</mark>');
+const blanks=s=>apo(s).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<span class="blank" style="min-width:${Math.max(2.2,a.length*0.62)}em"></span>`);
+const filled=s=>apo(s).replace(/\[\[(.+?)\]\]/g,'<b class="ans">$1</b>');
+const answersOf=s=>[...s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+const norm=s=>String(s||'').toLowerCase().replace(/[’`]/g,"'").replace(/n't\b/g,' not').replace(/'m\b/g,' am').replace(/'re\b/g,' are').replace(/'s\b/g,' is').replace(/\s+/g,' ').trim();
+const ICON_SPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_STOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+/* ---------- content ---------- */
+/* [[x]] = a gap (an answer). In the listening texts [[x]] = past simple verb, {{x}} = new word. */
+const DRILL=[
+ {tag:"Present simple", verb:"study", lines:[
+   {s:"I [[study]] English every day.", h:"study"},
+   {s:"I [[don't study]] on Sundays.", h:"study, negative"},
+   {s:"[[Do]] you [[study]] English at night?", h:"study, question"}]},
+ {tag:"Present continuous", verb:"study", lines:[
+   {s:"I [[am studying]] English now.", h:"study"},
+   {s:"I [[am not studying]] now.", h:"study, negative"},
+   {s:"[[Are]] you [[studying]] English now?", h:"study, question"}]},
+ {tag:"Present simple", verb:"work", lines:[
+   {s:"She [[works]] in an IT company.", h:"work"},
+   {s:"She [[doesn't work]] on weekends.", h:"work, negative"},
+   {s:"[[Does]] she [[work]] from home?", h:"work, question"}]},
+ {tag:"Present continuous", verb:"work", lines:[
+   {s:"She [[is working]] from home today.", h:"work"},
+   {s:"She [[isn't working]] today.", h:"work, negative"},
+   {s:"[[Is]] she [[working]] today?", h:"work, question"}]},
+ {tag:"Present simple", verb:"dance", lines:[
+   {s:"We [[dance]] every Friday.", h:"dance"},
+   {s:"We [[don't dance]] on Sundays.", h:"dance, negative"},
+   {s:"[[Do]] you [[dance]] every Friday?", h:"dance, question"}]},
+ {tag:"Present continuous", verb:"dance", lines:[
+   {s:"We [[are dancing]] now.", h:"dance"},
+   {s:"We [[aren't dancing]] now.", h:"dance, negative"},
+   {s:"[[Are]] you [[dancing]] now?", h:"dance, question"}]},
+ {tag:"Mixed: simple or continuous?", verb:"", lines:[
+   {s:"I usually [[get up]] at seven.", h:"get up"},
+   {s:"Right now she [[is talking]] on the phone.", h:"talk"},
+   {s:"[[Does]] your brother [[play]] video games every day?", h:"play"},
+   {s:"We [[aren't watching]] TV at the moment.", h:"watch, negative"},
+   {s:"He [[doesn't eat]] meat.", h:"eat, negative"}]}
+];
+
+const TEXTS=[
+ {name:"Anna", role:"UX/UI designer", sentences:[
+  "My name is Anna and I work as a UX/UI designer.",
+  "I [[didn't have]] a design {{degree}}.",
+  "I [[studied]] economics at university, but I [[didn't enjoy]] it.",
+  "Why [[did I choose]] design?",
+  "Because I always [[liked]] drawing and solving problems.",
+  "In 2021 I [[took]] an online {{course}} and [[learned]] Figma.",
+  "I {{practised}} every evening for six months.",
+  "Then I [[made]] five projects for my portfolio and [[sent]] them to many companies.",
+  "My first job [[was]] in a small startup.",
+  "I [[worked]] with developers and I [[learned]] a lot about {{teamwork}}.",
+  "Two years later I {{moved}} to a bigger company, and now I design apps for banks."]},
+ {name:"Max", role:"DevOps engineer", sentences:[
+  "I'm Max and I'm a DevOps engineer.",
+  "I {{graduated from}} a technical university in 2019.",
+  "I [[studied]] computer science, and I [[wrote]] my final project about servers.",
+  "After that I [[worked]] as a system administrator for one year.",
+  "I [[didn't liked]] the work because it [[was]] boring and I [[did]] the same tasks every day.",
+  "So I [[started]] to learn Linux, Docker and Git in the evenings.",
+  "I [[built]] a small project at home and I [[uploaded]] it to GitHub.",
+  "A {{recruiter}} [[found]] my profile and [[called]] me.",
+  "I [[had]] three interviews and I {{got a job}}.",
+  "In my first year I [[automated]] many tasks, and my team [[deployed]] code much faster."]},
+ {name:"Olha", role:"Project manager", sentences:[
+  "Hello, I'm Olha and I'm a project manager.",
+  "I [[didn't go]] to university for this job.",
+  "First, I [[worked]] as an office {{assistant}}, and I [[helped]] the team with documents.",
+  "After a year my manager [[asked]] me to organise a small project, and I [[loved]] it.",
+  "Then I [[goed]] to a {{course}} for project managers.",
+  "It {{lasted}} three months and I [[finished]] it with a good result.",
+  "After the course I {{became}} a project coordinator in an IT company.",
+  "I [[planned]] tasks, [[talked]] to clients and [[checked]] the {{deadlines}}.",
+  "It [[wasn't]] easy, but I [[learned]] fast.",
+  "Last year my company [[gave]] me my own team, and now I {{manage}} six people."]}
+];
+const NEWWORDS=[
+ ["graduate from","закінчити (університет)"],["degree","ступінь, диплом"],["course","курс"],["practise","практикувати, тренуватися"],
+ ["teamwork","командна робота"],["recruiter","рекрутер"],["get a job","отримати роботу"],["assistant","помічник, асистент"],
+ ["deadline","крайній термін"],["manage","керувати"],["move","переїжджати, переміщатися"],["last","тривати"],["become","ставати"]
+];
+const DISCUSS=[
+ {s:"I [[graduated]] from a technical university in 2019.", who:"Max", type:"Positive", why:"Positive past: the verb has its past form. Graduate is regular, so it takes -ed."},
+ {s:"Why [[did]] I [[choose]] design?", who:"Anna", type:"Question", why:"Question: (question word) + did + subject + base verb. The verb stays choose, because did already shows the past."},
+ {s:"I [[didn't go]] to university for this job.", who:"Olha", type:"Negative", why:"Negative: subject + didn't + base verb. The verb stays go, because didn't already shows the past."},
+ {s:"I didn't liked the work because it was boring.", who:"Max", type:"Negative", mistake:true, fix:"I didn't like the work because it was boring.", why:"After didn't the verb stays in the base form (like). Didn't already shows the past, so liked marks the past twice."},
+ {s:"Then I goed to a course for project managers.", who:"Olha", type:"Positive", mistake:true, fix:"Then I went to a course for project managers.", why:"Go is an irregular verb. Its past form is went, not goed. Irregular verbs do not take -ed."}
+];
+const VERBS=[
+ {base:"work", past:"worked", sound:"/t/", rule:"just add -ed", pos:"She [[worked]] in a bank for two years.", neg:"She [[didn't work]] on Sundays.", q:"[[Did]] she [[work]] in Kyiv?"},
+ {base:"study", past:"studied", sound:"/d/", rule:"consonant + y becomes -ied", pos:"He [[studied]] law at university.", neg:"He [[didn't study]] in the evening.", q:"[[Did]] he [[study]] abroad?"},
+ {base:"start", past:"started", sound:"/ɪd/", rule:"ends in t or d, so an extra syllable", pos:"They [[started]] a new project.", neg:"They [[didn't start]] on time.", q:"[[Did]] they [[start]] in May?"}
+];
+const PAST=[
+ {tag:"Past simple", verb:"graduate", lines:[
+   {s:"I [[graduated]] from university in 2019.", h:"graduate"},
+   {s:"My brother [[didn't graduate]] from university.", h:"graduate, negative"},
+   {s:"When [[did]] you [[graduate]] from school?", h:"graduate, question"}]},
+ {tag:"Past simple", verb:"help", lines:[
+   {s:"She [[helped]] me with my homework.", h:"help"},
+   {s:"They [[didn't help]] us last week.", h:"help, negative"},
+   {s:"[[Did]] he [[help]] you with the project?", h:"help, question"}]},
+ {tag:"Past simple", verb:"finish", lines:[
+   {s:"I [[finished]] work at six o'clock.", h:"finish"},
+   {s:"He [[didn't finish]] the course last month.", h:"finish, negative"},
+   {s:"[[Did]] you [[finish]] the report yesterday?", h:"finish, question"}]},
+ {tag:"Past simple", verb:"move", lines:[
+   {s:"We [[moved]] to Kyiv in 2020.", h:"move"},
+   {s:"She [[didn't move]] to another city.", h:"move, negative"},
+   {s:"Why [[did]] you [[move]] to a new company?", h:"move, question"}]},
+ {tag:"Past simple", verb:"call", lines:[
+   {s:"He [[called]] me last night.", h:"call"},
+   {s:"I [[didn't call]] my friend yesterday.", h:"call, negative"},
+   {s:"[[Did]] they [[call]] you after the interview?", h:"call, question"}]}
+];
+const PRACTICE=[
+ {s:"I [[started]] learning English two years ago.", h:"start"},
+ {s:"We [[didn't finish]] the project on time.", h:"not finish"},
+ {s:"[[Did]] you [[enjoy]] your first job?", h:"enjoy"},
+ {s:"A recruiter [[called]] me yesterday and [[invited]] me to an interview.", h:"call, invite"},
+ {s:"Where [[did]] you [[live]] five years ago?", h:"live"}
+];
+const QUESTIONS=[
+ ["What did you cook last weekend?","cook → cooked"],
+ ["Who did you call yesterday?","call → called"],
+ ["What did you watch last night?","watch → watched"],
+ ["Did you play any games last weekend? Which ones?","play → played"],
+ ["How did you celebrate your last birthday?","celebrate → celebrated"],
+ ["Where did you travel last year?","travel → travelled"],
+ ["What did you want to be when you were a child?","want → wanted"],
+ ["Which websites did you visit yesterday?","visit → visited"],
+ ["What did you order the last time you were in a café?","order → ordered"],
+ ["Who did you help recently? How did you help?","help → helped"]
+];
+
+/* ---------- audio ---------- */
+const synth=window.speechSynthesis;
+let voices=[], auto=[], autoPitch=[1,1,1], rate=0.92, run=0;
+const FEM=/aria|jenny|michelle|ana\b|emma|sonia|libby|maisie|natasha|clara|samantha|karen|moira|tessa|serena|fiona|victoria|allison|ava|susan|zira|hazel|catherine|female|kate|stephanie|nicky|joana|zoe/i;
+const MAL=/guy|davis|ryan|thomas|eric|roger|steffan|christopher|brian|daniel|alex|fred|tom|aaron|arthur|oliver|james|mark|david|george|rishi|lee|male/i;
+function genderOf(v){const n=v.name||'';if(/female/i.test(n))return 'f';if(/\bmale\b/i.test(n))return 'm';if(FEM.test(n))return 'f';if(MAL.test(n))return 'm';return '';}
+function voiceScore(v){let s=0,n=v.name||'';if(/natural/i.test(n))s+=8;if(/online/i.test(n))s+=4;if(/neural|premium|enhanced/i.test(n))s+=5;if(/google/i.test(n))s+=3;if(/aria|jenny|guy|davis|michelle|ryan|sonia|libby|samantha|daniel|karen|serena/i.test(n))s+=2;if(/compact|espeak|robot|whisper|zarvox|bad news|bells|boing|cellos|trinoids|organ|albert|bubbles|deranged|good news|hysterical|jester|junior|kathy|princess|ralph|superstar/i.test(n))s-=20;if(/en[-_](US|GB)/i.test(v.lang))s+=1;if(v.localService===false)s+=1;return s;}
+function loadVoices(){
+  if(!synth) return;
+  voices=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const rank=voices.slice().sort((a,b)=>voiceScore(b)-voiceScore(a));
+  const fem=rank.filter(v=>genderOf(v)==='f'), mal=rank.filter(v=>genderOf(v)==='m'), other=rank.filter(v=>!genderOf(v));
+  // 0 Anna (woman), 1 Max (man), 2 Olha (woman, a different voice from Anna)
+  const pick=(l,not)=>l.find(v=>!not.includes(v))||null;
+  const A=pick(fem,[])||pick(other,[]), M=pick(mal,[A])||pick(other,[A]), O=pick(fem,[A,M])||pick(other,[A,M])||A;
+  auto=[A,M,O]; autoPitch=[1,0.88,1.08];
+  const sel=$('#voice'), keep=sel.value;
+  sel.innerHTML='<option value="auto">Different voice for each person</option>'+voices.map(v=>`<option value="${v.voiceURI}">${v.name} (${v.lang})${genderOf(v)==='f'?' – woman':genderOf(v)==='m'?' – man':''}</option>`).join('');
+  if([...sel.options].some(o=>o.value===keep)) sel.value=keep;
+}
+function voiceFor(i){const c=$('#voice').value;if(c!=='auto'){const v=voices.find(v=>v.voiceURI===c);if(v)return v;}return auto.length?(auto[i%3]||auto[0]||null):null;}
+function setBtn(b,on){if(!b)return;b.setAttribute('aria-pressed',on?'true':'false');const l=b.querySelector('.lbl');if(l)l.textContent=on?'Stop':'Listen';}
+function clearActive(){$$('.s.now').forEach(e=>e.classList.remove('now'));$$('[aria-pressed="true"][data-audio]').forEach(b=>setBtn(b,false));}
+function stopAll(){run++;if(synth)synth.cancel();clearActive();}
+function playQueue(items,btn,speaker){
+  if(!synth) return;
+  stopAll(); const my=run; setBtn(btn,true); let i=0;
+  const next=()=>{
+    if(my!==run) return;
+    if(i>=items.length){clearActive();return;}
+    const it=items[i++];
+    $$('.s.now').forEach(e=>e.classList.remove('now')); if(it.el) it.el.classList.add('now');
+    const u=new SpeechSynthesisUtterance(it.text);
+    const v=voiceFor(speaker); if(v){u.voice=v;u.lang=v.lang;}else u.lang='en-US';
+    u.rate=rate; u.pitch=($('#voice').value==='auto')?(autoPitch[speaker%3]||1):1;
+    u.onend=()=>setTimeout(next,250);
+    u.onerror=e=>{if(my===run&&e.error!=='canceled'&&e.error!=='interrupted')clearActive();};
+    window.__utterance=u;
+    try{synth.resume();}catch(e){}
+    synth.speak(u);
+  };
+  setTimeout(next,80);
+}
+function speakOne(text,btn,speaker){
+  if(btn&&btn.getAttribute('aria-pressed')==='true'){stopAll();return;}
+  playQueue([{el:null,text}],btn,speaker||0);
+}
+function audioBtn(label,attrs){return `<button type="button" class="mini" data-audio ${attrs} aria-pressed="false" aria-label="${label}">${ICON_SPK}${ICON_STOP}<span class="lbl">Listen</span></button>`;}
+if(!synth){$('#novoice').hidden=false;}
+else{
+  loadVoices();
+  if(typeof synth.addEventListener==='function') synth.addEventListener('voiceschanged',loadVoices);
+  setTimeout(()=>{loadVoices.late=true;loadVoices();},1500);
+}
+$('#voice').addEventListener('change',stopAll);
+
+/* ---------- flip deck ---------- */
+const DECKS={};
+function flipDeck(rootId,cards){
+  const root=$('#'+rootId); let i=0,on=false;
+  root.innerHTML=`<div class="deckbar"><span class="cnt"></span><div class="dots">${cards.map(()=>'<i></i>').join('')}</div></div>
+   <div class="flip" role="button" tabindex="0" aria-label="Card. Press to flip."><div class="flip-inner"><div class="face front"></div><div class="face back" aria-hidden="true"></div></div></div>
+   <div class="controls"><button type="button" class="btn prev">← Previous</button><button type="button" class="btn primary fl">Flip</button><button type="button" class="btn next">Next →</button></div>`;
+  const inner=$('.flip-inner',root), fr=$('.front',root), bk=$('.back',root);
+  function draw(reset){
+    if(reset){inner.style.transition='none';on=false;}
+    fr.innerHTML=cards[i].front; bk.innerHTML=cards[i].back;
+    inner.classList.toggle('on',on); fr.setAttribute('aria-hidden',on?'true':'false'); bk.setAttribute('aria-hidden',on?'false':'true');
+    $('.cnt',root).textContent=`Card ${i+1} of ${cards.length}`;
+    $$('.dots i',root).forEach((d,k)=>d.classList.toggle('on',k===i));
+    if(reset){void inner.offsetWidth;inner.style.transition='';}
+  }
+  const api={flip(){on=!on;draw(false);},next(){i=(i+1)%cards.length;draw(true);},prev(){i=(i-1+cards.length)%cards.length;draw(true);}};
+  $('.flip',root).addEventListener('click',api.flip);
+  $('.flip',root).addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();api.flip();}});
+  $('.fl',root).addEventListener('click',api.flip); $('.next',root).addEventListener('click',api.next); $('.prev',root).addEventListener('click',api.prev);
+  draw(true); DECKS[rootId]=api; return api;
+}
+function gapCards(list){
+  return list.map(c=>({
+    front:`<div class="tag"><span class="chip">${c.tag}</span>${c.verb?`<span class="chip plain">verb: ${c.verb}</span>`:''}</div>
+      <ol>${c.lines.map(l=>`<li>${blanks(l.s)}<span class="h">(${l.h})</span></li>`).join('')}</ol><p class="tap">Tap the card to flip</p>`,
+    back:`<div class="tag"><span class="chip ok">Answers</span><span class="chip plain">${c.tag}${c.verb?' · '+c.verb:''}</span></div>
+      <ol>${c.lines.map(l=>`<li>${filled(l.s)}</li>`).join('')}</ol><p class="tap">Tap the card to flip back</p>`
+  }));
+}
+flipDeck('drillDeck',gapCards(DRILL));
+flipDeck('pastDeck',gapCards(PAST));
+
+/* ---------- question deck (no flip) ---------- */
+(function(){
+  const root=$('#talkDeck'); let i=0,hint=false;
+  root.innerHTML=`<div class="deckbar"><span class="cnt"></span><div class="dots">${QUESTIONS.map(()=>'<i></i>').join('')}</div></div>
+   <div class="card qcard"><p class="qtext"></p><div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span class="hintbox"></span></div></div>
+   <div class="controls"><button type="button" class="btn prev">← Previous</button><button type="button" class="btn lis" data-audio aria-pressed="false">Listen</button><button type="button" class="btn hb">Show verb hint</button><button type="button" class="btn primary next">Next →</button></div>`;
+  function draw(){
+    $('.qtext',root).textContent=QUESTIONS[i][0];
+    $('.hintbox',root).innerHTML=hint?`<span class="chip">${QUESTIONS[i][1]}</span>`:'<span class="small">Answer with a regular past verb (-ed).</span>';
+    $('.hb',root).textContent=hint?'Hide verb hint':'Show verb hint';
+    $('.cnt',root).textContent=`Question ${i+1} of ${QUESTIONS.length}`;
+    $$('.dots i',root).forEach((d,k)=>d.classList.toggle('on',k===i));
+  }
+  const go=d=>{stopAll();i=(i+d+QUESTIONS.length)%QUESTIONS.length;hint=false;draw();};
+  const api={next:()=>go(1),prev:()=>go(-1),flip(){}};
+  $('.next',root).addEventListener('click',api.next); $('.prev',root).addEventListener('click',api.prev);
+  $('.hb',root).addEventListener('click',()=>{hint=!hint;draw();});
+  $('.lis',root).addEventListener('click',e=>speakOne(QUESTIONS[i][0],e.currentTarget,0));
+  $('.lis',root).innerHTML=ICON_SPK.replace('<svg','<svg style="width:18px;height:18px;vertical-align:-3px;margin-right:6px"')+ICON_STOP.replace('<svg','<svg style="width:18px;height:18px;vertical-align:-3px;margin-right:6px"')+'<span class="lbl">Listen</span>';
+  draw(); DECKS.talkDeck=api;
+})();
+
+/* ---------- gap lists ---------- */
+function gapList(listId,items,opts){
+  const root=$('#'+listId); opts=opts||{};
+  root.innerHTML=items.map((it,i)=>{
+    const ans=answersOf(it.s); let k=0;
+    const text=ans.length
+      ? apo(it.s).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-i="${i}" data-k="${k++}" type="text" size="${Math.max(4,a.length+1)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap ${k} of sentence ${i+1}">`)
+      : apo(it.s);
+    const speak=it.mistake?it.s:strip(it.s);
+    return `<li class="gl" data-i="${i}">
+      <div class="gl-main"><span class="num">${i+1}</span><p class="gl-text">${text}${it.h?`<span class="h">(${it.h})</span>`:''}</p></div>
+      <div class="gl-meta">
+        ${it.who?`<span class="chip plain">from ${it.who}</span>`:''}
+        ${audioBtn('Listen to sentence '+(i+1),`data-say="${speak.replace(/"/g,'&quot;')}" data-sp="${it.sp||0}"`)}
+        ${ans.length?`<button type="button" class="mini" data-check="${i}">Check</button>`:''}
+        <button type="button" class="mini" data-show="${i}" aria-expanded="false">Show answer</button>
+        <span class="res" id="${listId}-res${i}"></span>
+      </div>
+      <div class="answer" id="${listId}-ans${i}" hidden>
+        <div class="chips">${it.type?`<span class="chip">${it.type}</span>`:''}${it.mistake?'<span class="chip bad">Mistake</span>':(it.type?'<span class="chip ok">Correct</span>':'')}</div>
+        ${it.mistake?`<p class="fix"><strong>Correct:</strong> ${apo(it.fix)}</p>`:''}
+        ${it.why?`<p class="why">${it.why}</p>`:''}
+      </div></li>`;
+  }).join('');
+  const inputs=i=>$$(`input[data-i="${i}"]`,root);
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-check]');
+    if(c){const i=+c.dataset.check, ans=answersOf(items[i].s); let good=0;
+      inputs(i).forEach((inp,k)=>{const ok=norm(inp.value)===norm(ans[k]);inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&inp.value.trim()!=='');if(ok)good++;});
+      $('#'+listId+'-res'+i).textContent=good===ans.length?'All correct':`${good} of ${ans.length} correct`;
+      return;}
+    const s=e.target.closest('[data-show]');
+    if(s){const i=+s.dataset.show, box=$('#'+listId+'-ans'+i), open=box.hidden; box.hidden=!open;
+      s.setAttribute('aria-expanded',open?'true':'false'); s.textContent=open?'Hide answer':'Show answer';
+      const ans=answersOf(items[i].s);
+      if(open) inputs(i).forEach((inp,k)=>{inp.value=ans[k];inp.classList.add('ok');inp.classList.remove('bad');});
+      else inputs(i).forEach(inp=>{inp.value='';inp.classList.remove('ok','bad');});
+      $('#'+listId+'-res'+i).textContent='';}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('gap')){const li=e.target.closest('.gl');$('[data-check]',li).click();}});
+}
+gapList('discussList',DISCUSS.map((d,i)=>({...d,sp:{Anna:0,Max:1,Olha:2}[d.who]})));
+gapList('practiceList',PRACTICE);
+
+/* ---------- listening texts ---------- */
+$('#cards').innerHTML=TEXTS.map((t,ti)=>`
+  <article class="card">
+    <div class="card-head">
+      <div class="who"><span class="avatar" aria-hidden="true">${t.name[0]}</span><div><h3>${t.name}</h3><p class="role">${t.role}</p></div></div>
+      <button type="button" class="play" data-audio data-play="text" data-t="${ti}" aria-pressed="false" aria-label="Listen to ${t.name}">${ICON_SPK}${ICON_STOP}<span class="lbl">Listen</span></button>
+    </div>
+    <p class="passage">${t.sentences.map((s,si)=>`<span class="s" role="button" tabindex="0" data-t="${ti}" data-s="${si}">${mk(s)}</span>`).join(' ')}</p>
+  </article>`).join('');
+$('#newwords').innerHTML=NEWWORDS.map(w=>`<div class="wflip" role="button" tabindex="0" aria-pressed="false" aria-label="${w[0]}. Press to see the translation."><div class="wflip-in"><div class="wf wfront"><b>${w[0]}</b></div><div class="wf wback" aria-hidden="true"><b>${w[1]}</b></div></div></div>`).join('');
+$$('.wflip').forEach(el=>{const t=()=>{const on=el.getAttribute('aria-pressed')!=='true';el.setAttribute('aria-pressed',on);el.firstChild.classList.toggle('on',on);$('.wback',el).setAttribute('aria-hidden',on?'false':'true');};el.addEventListener('click',t);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t();}});});
+const textItems=(ti,from)=>$$(`.s[data-t="${ti}"]`).slice(from||0).map(el=>({el,text:strip(TEXTS[ti].sentences[+el.dataset.s])}));
+
+/* ---------- grammar table ---------- */
+let vi=0;
+$('#verbs').innerHTML=VERBS.map((v,i)=>`<button type="button" data-v="${i}" aria-pressed="${i===0}">${v.base}</button>`).join('');
+function drawTable(){
+  const v=VERBS[vi];
+  $$('#verbs button').forEach((b,i)=>b.setAttribute('aria-pressed',i===vi?'true':'false'));
+  $('#endbar').innerHTML=`<span><b>${v.base}</b> <span class="arrow">→</span> <mark class="g">${v.past}</mark></span><span class="chip">sound ${v.sound}</span><span class="small">${v.rule}</span> ${audioBtn('Listen to '+v.past,`data-say="${v.past}" data-sp="0"`)}`;
+  $('#conjBody').innerHTML=
+   `<tr><td>Positive</td><td class="pat">subject + verb<b>-ed</b></td><td class="ex">${mk(v.pos)}</td></tr>
+    <tr><td>Negative</td><td class="pat">subject + <b>didn't</b> + base verb</td><td class="ex">${mk(v.neg)}</td></tr>
+    <tr><td>Question</td><td class="pat"><b>Did</b> + subject + base verb?</td><td class="ex">${mk(v.q)}</td></tr>`;
+}
+$('#verbs').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b){vi=+b.dataset.v;drawTable();}});
+drawTable();
+
+/* ---------- global clicks for audio ---------- */
+document.addEventListener('click',e=>{
+  const sp=e.target.closest('.s');
+  if(sp){const ti=+sp.dataset.t;playQueue(textItems(ti,+sp.dataset.s),$(`[data-play="text"][data-t="${ti}"]`),ti);return;}
+  const pb=e.target.closest('[data-play="text"]');
+  if(pb){if(pb.getAttribute('aria-pressed')==='true'){stopAll();return;}const ti=+pb.dataset.t;playQueue(textItems(ti,0),pb,ti);return;}
+  const sb=e.target.closest('[data-say]');
+  if(sb){speakOne(sb.dataset.say,sb,+(sb.dataset.sp||0));}
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('s')){e.preventDefault();e.target.click();return;}
+  if(/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))||e.target.closest&&e.target.closest('.flip')) return;
+  const d=DECKS[{drill:'drillDeck',rules:'pastDeck',talk:'talkDeck'}[SCREENS[cur].id]];
+  if(!d) return;
+  if(e.key==='ArrowRight') d.next(); else if(e.key==='ArrowLeft') d.prev(); else if(e.key===' '||e.key==='Enter'){ if(!/BUTTON|A/.test(e.target.tagName)){e.preventDefault();d.flip();} }
+});
+
+/* ---------- screens ---------- */
+const SCREENS=[
+ {id:'drill',label:'Homework drill'},{id:'open',label:'My background'},{id:'listen',label:'Listen and read'},
+ {id:'discuss',label:'Five sentences'},{id:'rules',label:'Past simple'},{id:'practice',label:'Practice'},{id:'talk',label:'Questions'}
+];
+let cur=0;
+$('#steps').innerHTML=SCREENS.map((s,i)=>`<li><button type="button" data-go="${i}"><span class="n">${i+1}</span>${s.label}</button></li>`).join('');
+function go(i,fromHash){
+  stopAll(); cur=Math.max(0,Math.min(SCREENS.length-1,i));
+  SCREENS.forEach((s,k)=>{$('#s-'+s.id).hidden=k!==cur;});
+  $$('#steps button').forEach((b,k)=>{if(k===cur)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  $('#prevScreen').disabled=cur===0;
+  $('#nextScreen').disabled=cur===SCREENS.length-1;
+  $('#nextScreen').textContent=cur<SCREENS.length-1?`Next: ${SCREENS[cur+1].label} →`:'The end';
+  $('#prevScreen').textContent=cur>0?`← ${SCREENS[cur-1].label}`:'← Back';
+  if(!fromHash){try{history.replaceState(null,'','#'+(cur+1));}catch(e){}}
+  window.scrollTo(0,0);
+}
+$('#steps').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go);});
+$('#prevScreen').addEventListener('click',()=>go(cur-1));
+$('#nextScreen').addEventListener('click',()=>go(cur+1));
+window.addEventListener('pagehide',stopAll);
+go((parseInt((location.hash||'').slice(1),10)||1)-1,true);
+</script>
+</body>
+</html>

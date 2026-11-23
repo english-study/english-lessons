@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Family, Friends &amp; Present Simple</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --hl:#ffe45c; --hl-ink:#17202e; --vocab:#b4ead9; --vocab-ink:#0d3a2e; --now:#dbe4ff;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 56px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+input{font:inherit;color:var(--ink)}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;padding:0;list-style:none}
+.steps button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.85rem;padding:0}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.eyebrow{margin:14px 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;font-weight:700;letter-spacing:-.015em}
+h2{margin:26px 0 8px;font-size:1.2rem;font-weight:700}
+h3{margin:0;font-size:1.15rem}
+.lead{margin:10px 0 0;color:var(--muted);max-width:62ch}
+.hint{margin:14px 0 8px;color:var(--muted);font-size:.95rem}
+.small{font-size:.88rem;color:var(--muted)}
+.body{margin-top:22px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:.92rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.big-q{font-family:var(--font-text);font-size:clamp(1.4rem,3.4vw,2rem);line-height:1.3;margin:0 0 14px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.cloud{display:flex;flex-wrap:wrap;gap:12px 14px;padding:10px 4px}
+.wchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 18px;font-size:1.1rem;font-weight:500}
+.wchip.yes{border-color:var(--ok);color:var(--ok)}
+.wchip.no{border-color:var(--bad);color:var(--bad)}
+table.t{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table.t th,table.t td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t th{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+table.t td.k{font-weight:700}
+.scroll{overflow-x:auto}
+.rev{border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);border-radius:10px;padding:4px 18px;font-weight:700}
+.val{font-family:var(--font-text);font-size:1.15rem}
+.profile{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:22px;align-items:start}
+.photo{aspect-ratio:3/4;border-radius:18px;overflow:hidden;background:var(--accent-soft);border:1px solid var(--line)}
+.photo img,.photo svg{width:100%;height:100%;object-fit:cover;display:block}
+.plines{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.plines li{font-family:var(--font-text);font-size:clamp(1.1rem,2.4vw,1.4rem)}
+.s{border-radius:6px;padding:2px 3px;cursor:pointer}
+u.pa{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px;text-decoration-color:var(--accent);color:var(--accent);font-weight:700}
+.kw{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.kcard{border:1px solid var(--line);background:var(--vocab);color:var(--vocab-ink);border-radius:14px;padding:12px;text-align:center;font-weight:700;font-size:1.05rem}
+.cy{display:grid;gap:8px;padding:0;margin:8px 0 0;list-style:none}
+.cy li{display:flex;align-items:center;gap:12px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.cy .bx{width:1.1em;height:1.1em;border:2px solid var(--line);border-radius:6px;display:grid;place-items:center;font-size:.8em;color:transparent;flex:none}
+.cy li.done .bx{background:var(--ok);border-color:var(--ok);color:#fff}
+.gl-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.gl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-top:34px}
+.tnote{margin-top:22px;padding:12px 18px;border:2px dashed #c79a00;border-radius:14px;background:var(--hl);color:var(--hl-ink);font-size:.98rem}
+.tnote b{letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}
+.tnote ul{margin:6px 0 0;padding-left:20px}
+@media (max-width:640px){ .profile{grid-template-columns:1fr} .photo{max-width:220px} .card{padding:16px} }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <ol class="steps" id="steps" aria-label="Lesson screens"></ol>
+  <main id="main"></main>
+  <div id="tnotes"></div>
+  <nav class="nav" aria-label="Previous and next screen">
+    <button type="button" class="btn" id="prev">← Back</button>
+    <button type="button" class="mini" id="tt" aria-pressed="false">Teacher notes (T)</button>
+    <button type="button" class="btn primary" id="next">Next →</button>
+  </nav>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const apo=s=>s.replace(/'/g,'’');
+const strip=s=>s.replace(/\[\[|\]\]/g,'');
+const pa=s=>apo(esc(s)).replace(/\[\[(.+?)\]\]/g,'<u class="pa">$1</u>');
+const ISPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ISTOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+const listenBtn=(text,label)=>`<button type="button" class="mini" data-audio data-say="${esc(text)}" aria-pressed="false" data-label="${label||'Listen'}">${ISPK}${ISTOP}<span class="lbl">${label||'Listen'}</span></button>`;
+
+const synth=window.speechSynthesis; let voice=null, run=0;
+function pickVoice(){ if(!synth) return; const vs=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const sc=v=>{let s=0,n=v.name||''; if(/natural|neural|premium|enhanced/i.test(n))s+=6; if(/online/i.test(n))s+=3; if(/google/i.test(n))s+=3;
+    if(/aria|jenny|michelle|sonia|libby|samantha|karen|serena|zira|hazel/i.test(n))s+=3; if(/en[-_]GB/i.test(v.lang))s+=2; if(/en[-_]US/i.test(v.lang))s+=1; return s;};
+  voice=vs.sort((a,b)=>sc(b)-sc(a))[0]||null; }
+function setBtn(b,on){ if(!b) return; b.setAttribute('aria-pressed',on?'true':'false'); const l=b.querySelector('.lbl'); if(l) l.textContent=on?'Stop':(b.dataset.label||'Listen'); }
+function clearNow(){ $$('.now').forEach(e=>e.classList.remove('now')); $$('[data-audio][aria-pressed="true"]').forEach(b=>setBtn(b,false)); }
+function stopAll(){ run++; if(synth) synth.cancel(); clearNow(); }
+function sayQueue(items,btn,opt){
+  if(!synth) return; if(!voice) pickVoice(); opt=opt||{}; stopAll(); const my=run; setBtn(btn,true); let i=0;
+  const next=()=>{ if(my!==run) return; if(i>=items.length){ clearNow(); return; } const it=items[i++];
+    $$('.now').forEach(e=>e.classList.remove('now')); (it.els||[]).forEach(e=>e&&e.classList.add('now'));
+    const u=new SpeechSynthesisUtterance(it.text); if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang='en-GB';
+    u.rate=it.rate||opt.rate||0.9; u.onend=()=>setTimeout(next,opt.gap||300);
+    u.onerror=e=>{ if(my===run&&e.error!=='canceled'&&e.error!=='interrupted') clearNow(); };
+    try{synth.resume();}catch(e){} synth.speak(u); };
+  setTimeout(next,60);
+}
+if(synth){ pickVoice(); if(synth.addEventListener) synth.addEventListener('voiceschanged',pickVoice); setTimeout(pickVoice,1200); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-say]'); if(!b||!b.dataset.say) return;
+  const isBtn=b.hasAttribute('data-audio'); if(b.getAttribute('aria-pressed')==='true'){ stopAll(); return; }
+  sayQueue([{text:b.dataset.say,els:isBtn?[]:[b]}],isBtn?b:null); });
+window.addEventListener('pagehide',stopAll);
+
+/* ---------------- content ---------------- */
+const PHOTOS={};
+const PEOPLE={
+ sofia:{name:'Sofia', facts:[['Country','Spain'],['Age','20'],['Job','yoga teacher'],['Hobby','yoga']],
+  lines:['[[Her]] name is Sofia.','She is from Spain.','She is a yoga teacher.','She likes yoga.','She dances on Fridays.']},
+ daniel:{name:'Daniel', facts:[['Country','Canada'],['Age','30'],['Job','teacher'],['Hobby','football']],
+  lines:['[[His]] name is Daniel.','He is from Canada.','He is a teacher.','He likes football.','He plays football on Saturdays.']}
+};
+const MORE={
+ anna:{name:'Anna', facts:[['Country','Poland'],['Job','nurse'],['Hobby','music'],['City','Warsaw']]},
+ tom:{name:'Tom', facts:[['Country','the USA'],['Job','engineer'],['Hobby','football'],['City','New York']]}
+};
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const POSS=[['I','my','My name is Anna.'],['you','your','Your name is Tom.'],['he','his','His name is Daniel.'],['she','her','Her name is Sofia.'],['we','our','Our lesson is today.'],['they','their','Their city is Madrid.']];
+const VERBS=[['like','likes'],['work','works'],['play','plays'],['dance','dances'],['live','lives']];
+const JOBS=['teacher','doctor','nurse','driver','chef','engineer','student','shop assistant'];
+const FAMILY=['mother','father','brother','sister','relative'];
+const CANYOU=['say today’s day (Monday-Sunday)','use my/your/his/her/our/their','use "to be": is / isn’t / is it...?','say "he likes" / "she works" (he/she + -s)','describe 3 people: name, job, likes'];
+
+const OPENQ=[
+ ['What day is it today?','Today is Friday.'],
+ ['What day was it yesterday?','Yesterday was Thursday.'],
+ ['What day is it tomorrow?','Tomorrow is Saturday.'],
+ ['When do you usually have English lessons?','I usually have lessons on Monday and Thursday.'],
+ ['What is your favourite day of the week? Why?','My favourite day is Saturday, because I don’t work.']
+];
+const DAYGAPS=[
+ {s:'Today [[is]] Friday.',h:'be'},
+ {s:'It [[is not]] Monday today.',h:'be - negative'},
+ {s:'[[Is it]] the weekend? No, it isn’t.',h:'be - question'},
+ {s:'Yesterday [[was]] Thursday.',h:'was = is, yesterday'}
+];
+const PSGAPS=[
+ {s:'I [[like]] tea.',h:'like'},
+ {s:'You [[like]] tea.',h:'like'},
+ {s:'He [[likes]] tea.',h:'like'},
+ {s:'She [[works]] on Monday.',h:'work'},
+ {s:'It [[rains]] a lot in autumn.',h:'rain'},
+ {s:'We [[live]] in Kyiv.',h:'live'},
+ {s:'They [[play]] football.',h:'play'}
+];
+function gapListHTML(items){
+  const ans=g=>[...g.s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+  return `<ol class="gl-list">${items.map((g,i)=>`<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><p class="gl-text">${apo(esc(g.s)).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-i="${i}" type="text" size="${Math.max(a.length+2,6)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap in sentence ${i+1}">`)}<span class="h">(${esc(g.h)})</span></p></div><div class="gl-meta"><button type="button" class="mini" data-check="${i}">Check</button><button type="button" class="mini" data-show="${i}">Show answer</button><span class="res small"></span></div></li>`).join('')}</ol>`;
+}
+function gapListInit(root,items){
+  const ans=g=>[...g.s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-check]'), s=e.target.closest('[data-show]');
+    if(c){ const i=+c.dataset.check, inp=$(`input[data-i="${i}"]`,root), ok=inp.value.trim().toLowerCase()===ans(items[i])[0].toLowerCase();
+      inp.classList.toggle('ok',ok); inp.classList.toggle('bad',!ok&&inp.value.trim()!==''); c.parentElement.querySelector('.res').textContent=ok?'Correct!':'Try again'; }
+    if(s){ const i=+s.dataset.show, inp=$(`input[data-i="${i}"]`,root); inp.value=ans(items[i])[0]; inp.classList.add('ok'); inp.classList.remove('bad'); s.parentElement.querySelector('.res').textContent=''; sayQueue([{text:strip(items[i].s),els:[]}],null); }
+  });
+  root.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.classList.contains('gap')) $(`[data-check="${e.target.dataset.i}"]`,root).click(); });
+}
+function openQHTML(items){
+  return `<ol class="gl-list">${items.map(([q,model],i)=>`<li class="gl"><div class="row" style="justify-content:space-between"><p class="big-q" style="margin:0">${esc(q)}</p>${listenBtn(q,'Hear question')}</div>
+   <input type="text" class="gap" style="width:100%;margin:10px 0 0;text-align:left" placeholder="Your answer..." aria-label="Your answer to: ${esc(q)}">
+   <div class="gl-meta"><button type="button" class="mini" data-model="${i}">Model answer</button></div></li>`).join('')}</ol>`;
+}
+function openQInit(root,items){
+  root.addEventListener('click',e=>{ const b=e.target.closest('[data-model]'); if(!b) return; const model=items[+b.dataset.model][1]; sayQueue([{text:model,els:[]}],null); const li=b.closest('.gl'); let note=li.querySelector('.model-note'); if(!note){ note=document.createElement('p'); note.className='small model-note'; note.style.margin='8px 0 0'; li.querySelector('.gl-meta').after(note); } note.textContent='Example: '+model; });
+}
+
+function silhouette(name){ return `<svg viewBox="0 0 120 160" role="img" aria-label="Picture of ${name}"><rect width="120" height="160" fill="var(--accent-soft)"/><path d="M12 160 Q14 118 60 112 Q106 118 108 160Z" fill="var(--line)"/><ellipse cx="60" cy="70" rx="26" ry="30" fill="var(--line)"/><text x="60" y="82" text-anchor="middle" font-size="30" font-weight="700" fill="var(--muted)" font-family="sans-serif">${esc(name[0])}</text></svg>`; }
+function photo(key){ const p=PEOPLE[key]; return PHOTOS[key] ? `<img src="${PHOTOS[key]}" alt="Photo of ${p.name}">` : silhouette(p.name); }
+const profileHTML=key=>{ const p=PEOPLE[key]; return `<div class="profile"><div class="photo">${photo(key)}</div><div><div class="card"><div class="scroll"><table class="t"><tbody>${p.facts.map(f=>`<tr><td class="k">${f[0]}</td><td class="val">${f[1]}</td></tr>`).join('')}</tbody></table></div></div>
+ <button type="button" class="btn primary" id="show">Show the sentences</button>
+ <div id="sent" hidden><div class="card" style="margin-top:14px"><div class="card-head"><h3>${p.name}</h3><button type="button" class="mini" id="pl" data-audio aria-pressed="false" data-label="Listen">${ISPK}${ISTOP}<span class="lbl">Listen</span></button></div><ol class="plines" style="list-style:none">${p.lines.map((l,k)=>`<li><span class="s" role="button" tabindex="0" data-k="${k}">${pa(l)}</span></li>`).join('')}</ol></div></div></div></div>`; };
+function profileInit(root,key){
+  const p=PEOPLE[key];
+  $('#show',root).onclick=e=>{ $('#sent',root).hidden=false; e.currentTarget.hidden=true; };
+  const lis=()=>$$('.s',root);
+  const items=from=>lis().slice(from||0).map(el=>({text:strip(p.lines[+el.dataset.k]),els:[el]}));
+  $('#pl',root).onclick=e=>{ const b=e.currentTarget; if(b.getAttribute('aria-pressed')==='true'){stopAll();return;} sayQueue(items(0),b,{gap:350}); };
+  lis().forEach(el=>el.onclick=()=>sayQueue(items(+el.dataset.k),null,{gap:350}));
+}
+
+const SCREENS=[
+ {label:'Warm-up',title:'Friday the 13th!',lead:'Today is Friday the 13th. What do you think?',
+  html:()=>`<div class="card"><p class="big-q">Some people think these things are bad luck. What do you think — good or bad?</p>
+   <div class="cloud">
+   <button type="button" class="wchip" data-say="a black cat">a black cat</button>
+   <button type="button" class="wchip" data-say="a broken mirror">a broken mirror</button>
+   <button type="button" class="wchip" data-say="walking under a ladder">walking under a ladder</button>
+   <button type="button" class="wchip" data-say="the number 13">the number 13</button>
+   </div></div>
+   <div class="card"><p class="big-q" style="margin:0">I think it's a <span class="chip">good</span> / <span class="chip">bad</span> day, because...</p>${listenBtn("I think it's a good day. / I think it's a bad day.")}</div>`,
+  init:()=>{},
+  notes:['Ask about each item: "Good or bad? Why?" Keep it very simple — accept "I think..." / "I don’t think so."','Never use the word "superstition" — he doesn’t know it. Keep the idea in plain words.','Move on: "Also — we talked about numbers before. Let’s do days of the week!"']},
+ {label:'Days & to be',title:'Days of the week',lead:'Revise "to be" — then you answer, in full sentences.',
+  html:()=>`<div class="card"><p class="hint">Tap a day to hear it</p><div class="cloud">${DAYS.map(d=>`<button type="button" class="wchip" data-say="${d}">${d}</button>`).join('')}</div></div>
+   <h2>1. Fill in the gaps</h2>
+   ${gapListHTML(DAYGAPS)}
+   <h2>2. Now answer about you</h2>
+   ${openQHTML(OPENQ)}`,
+  init:root=>{ gapListInit(root,DAYGAPS); openQInit(root,OPENQ); },
+  notes:['Gaps first: he types or says the missing word (is / is not / Is it / was). "Was" is new — just model it, no need to explain past tense fully.','Then ask the open questions aloud, one by one. He answers in a full sentence (typing is optional — the point is speaking). Tap "Model answer" together if he’s stuck.']},
+ {label:'Possessives',title:'my / your / his / her / our / their',lead:'Quick revision — one sentence each.',
+  html:()=>`<table class="t"><thead><tr><th>Pronoun</th><th>Word</th><th>Example</th></tr></thead><tbody id="pb"></tbody></table>`,
+  init:root=>{ $('#pb',root).innerHTML=POSS.map((r,i)=>`<tr data-i="${i}"><td class="k">${r[0]}</td><td><button type="button" class="rev" ${i===0?'hidden':''}>?</button><span class="val" ${i===0?'':'hidden'}><u class="pa">${r[1]}</u></span></td><td class="val" ${i===0?'':'hidden'}>${pa(r[2].replace(new RegExp('\\b'+r[1]+'\\b','i'),m=>`[[${m}]]`))}</td></tr>`).join('');
+    $$('tr',root).forEach(tr=>{ const b=$('.rev',tr); if(!b) return; b.onclick=()=>{ b.hidden=true; $$('.val',tr).forEach(x=>x.hidden=false); sayQueue([{text:POSS[+tr.dataset.i][2],els:[]}],null); }; }); },
+  notes:['He already knows these — move fast. One example each, tap ? to check.']},
+ {label:'Present Simple',title:'NEW: he / she + "-s"',lead:'"I like coffee." but "He likes coffee." Why the -s?',
+  html:()=>`<div class="card"><p class="big-q">I <b>like</b> coffee. &nbsp;&nbsp; He <b>likes</b> coffee.</p><p class="hint">Rule: with he / she / it, add <b>-s</b> to the verb.</p></div>
+   <table class="t"><thead><tr><th>Verb</th><th>he / she</th></tr></thead><tbody>${VERBS.map(v=>`<tr><td class="k">${v[0]}</td><td class="val"><u class="pa">${v[1]}</u> ${listenBtn('He '+v[1]+'.')}</td></tr>`).join('')}</tbody></table>
+   <h2>Now you fill the form</h2>
+   <p class="hint">Use the verb in brackets. Add -s for he / she / it.</p>
+   ${gapListHTML(PSGAPS)}`,
+  init:root=>gapListInit(root,PSGAPS), notes:['Let him guess the rule himself first (table above), then he fills the gaps for every pronoun — I, you, he, she, it, we, they — so he feels the whole pattern, not just he/she.','Note: live → lives is a common spelling snag.']},
+ {label:'Sofia & Daniel',title:'Meet Sofia and Daniel again',lead:'Read the facts, then make the sentences.',
+  html:()=>`${profileHTML('sofia')}<h2>and...</h2>${profileHTML('daniel')}
+   <div class="card"><p class="big-q" style="margin:0">Are Sofia and Daniel a good match? Why / why not?</p></div>
+   <h2>Jobs</h2><div class="kw">${JOBS.map(j=>`<button type="button" class="kcard" data-say="${j}">${j}</button>`).join('')}</div>`,
+  init:root=>{ const blocks=$$('.profile',root);
+    if(blocks[0]) profileInit(blocks[0], 'sofia');
+    if(blocks[1]) profileInit(blocks[1], 'daniel');
+  },
+  notes:['He describes Sofia, then Daniel, using the facts (She is a yoga teacher. She likes yoga...).','Discuss: good match or not — any reason counts, in simple present simple sentences.','Point out job words as they come up.']},
+ {label:'Two more people',title:'Describe Anna and Tom',lead:'No sentences given this time — build them yourself.',
+  html:()=>Object.entries(MORE).map(([key,p])=>`<div class="profile" style="margin-bottom:18px"><div class="photo">${silhouette(p.name)}</div><div class="card"><h3>${p.name}</h3><table class="t"><tbody>${p.facts.map(f=>`<tr><td class="k">${f[0]}</td><td class="val">${f[1]}</td></tr>`).join('')}</tbody></table></div></div>`).join(''),
+  init:()=>{}, notes:['He makes the full sentences himself: "Her name is Anna. She is a nurse. She likes music. She lives in Warsaw."']},
+ {label:'Family & speaking',title:'Your family and friends',lead:'Quick words, then the main task.',
+  html:()=>`<div class="kw">${FAMILY.map(f=>`<button type="button" class="kcard" data-say="${f}">${f}</button>`).join('')}</div>
+   <div class="card" style="margin-top:16px"><p class="big-q">My mother <b>likes</b> cooking. My brother <b>plays</b> football.</p></div>
+   <div class="card"><p class="hint">Main task — describe 3 people (friends or family, your choice):</p><p class="big-q" style="margin:0">[Name] is my [relation]. [He/She] is a [job / student]. [He/She] likes [hobby].</p></div>`,
+  init:()=>{}, notes:['He already knows the family words — don’t linger here.','The speaking task is the main event: 3 people, full sentences, present simple -s where needed.']},
+ {label:'Wrap-up',title:'Can you...?',lead:'',
+  html:()=>`<ul class="cy">${CANYOU.map(t=>`<li><span class="bx">✓</span><span>${t}</span></li>`).join('')}</ul>`,
+  init:root=>{ $$('.cy li',root).forEach(el=>el.onclick=()=>el.classList.toggle('done')); },
+  notes:['Tick off together. Note 1-2 mistakes to mention next lesson, don’t over-correct now.']}
+];
+
+let cur=0, teacher=false;
+$('#steps').innerHTML=SCREENS.map((s,i)=>`<li><button type="button" data-go="${i}" aria-label="Screen ${i+1}: ${s.label}">${i+1}</button></li>`).join('');
+function renderNotes(){ const box=$('#tnotes'); const s=SCREENS[cur];
+  box.innerHTML=teacher?`<aside class="tnote"><b>Teacher notes</b><ul>${s.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></aside>`:'';
+  $('#tt').setAttribute('aria-pressed',teacher?'true':'false'); }
+function go(i){ stopAll(); cur=Math.max(0,Math.min(SCREENS.length-1,i)); const s=SCREENS[cur];
+  $('#main').innerHTML=`<p class="eyebrow">${cur+1} · ${s.label}</p><h1>${s.title}</h1>${s.lead?`<p class="lead">${s.lead}</p>`:''}<div class="body" id="body">${s.html()}</div>`;
+  s.init($('#body'));
+  $$('#steps button').forEach((b,k)=>{ if(k===cur) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+  $('#prev').disabled=cur===0; $('#next').disabled=cur===SCREENS.length-1;
+  $('#prev').textContent=cur>0?`← ${SCREENS[cur-1].label}`:'← Back';
+  $('#next').textContent=cur<SCREENS.length-1?`${SCREENS[cur+1].label} →`:'The end';
+  renderNotes(); window.scrollTo(0,0); }
+$('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(b) go(+b.dataset.go); });
+$('#prev').onclick=()=>go(cur-1); $('#next').onclick=()=>go(cur+1);
+$('#tt').onclick=()=>{ teacher=!teacher; renderNotes(); };
+document.addEventListener('keydown',e=>{ if(/INPUT|TEXTAREA/.test(e.target.tagName)) return; if(e.key==='t'||e.key==='T'){ teacher=!teacher; renderNotes(); } });
+go(0);
+</script>
+</body>
+</html>

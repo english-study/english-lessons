@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predict the future | How certain is your future, really?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Same look as lessons 1 and 2. Colour: mint = new words. Future forms are NOT colour-coded this lesson on purpose — the student decides which is which. */
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --vocab:#b4ead9; --vocab-ink:#0d3a2e;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1; --warm:#fff3d6;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+    --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52;
+    --vocab:#1c5a4c; --vocab-ink:#c3f6e7;
+    --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c; --warm:#3a3016;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5}
+.wrap{max-width:940px;margin:0 auto;padding:20px 16px 72px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:0;list-style:none}
+.steps button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px 6px 8px;font-size:.9rem}
+.steps .n{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:.8rem;font-weight:700}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps button[aria-current="step"] .n{background:rgba(255,255,255,.22);color:inherit}
+.warn{margin:8px 0;padding:10px 14px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:.95rem}
+.eyebrow{margin:18px 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+h2{margin:32px 0 8px;font-size:1.3rem;font-weight:700}
+h3{margin:0 0 6px;font-size:1.15rem}
+.lead{margin:12px 0 0;color:var(--muted);max-width:62ch}
+.hint{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+.small{font-size:.85rem;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:.9rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg,.play svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+mark.w{background:transparent;color:inherit;padding:0}
+.hl-w mark.w{background:var(--vocab);color:var(--vocab-ink);padding:1px 4px;border-radius:4px}
+.big-q{font-family:var(--font-text);font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.35;margin:0 0 14px;text-wrap:balance}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.qlist li{padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-family:var(--font-text);font-size:1.3rem;line-height:1.4}
+/* matching */
+.match{display:grid;grid-template-columns:1fr 1.5fr;gap:14px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mbtn{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font-size:1.05rem;line-height:1.35}
+.mw{font-weight:700;font-size:1.15rem}
+.mbtn.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.mbtn.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.mbtn.bad{background:var(--bad-soft);border-color:var(--bad)}
+.mbtn.hint{outline:3px dashed var(--accent);outline-offset:2px}
+.mstat{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+/* people deck (monologues) */
+.deckbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.ccard{min-height:280px}
+.who2{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:1.05rem}
+.idea{font-family:var(--font-text);font-size:clamp(1.15rem,2.5vw,1.45rem);line-height:1.65;margin:0 0 12px}
+.qsmall li{font-size:1.05rem;padding:10px 14px}
+/* magic ball */
+.ball{text-align:center;padding:30px 20px}
+.ballface{width:150px;height:150px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 30%, #4a4f63, #0c0e16 70%);display:grid;place-items:center;color:#fff;font-family:var(--font-text);font-size:1.05rem;line-height:1.3;padding:14px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+.balltext{min-height:3.4em;display:grid;place-items:center}
+.qchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+.qchips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-size:.95rem}
+.qchips button.sel{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+/* funnel */
+.funnel{display:flex;flex-wrap:wrap;gap:14px;margin:16px 0}
+.funnel .fstage{flex:1 1 220px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.funnel .fstage .cap{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.funnel .fstage .nm{font-weight:700;font-size:1.1rem;margin:6px 0}
+.funnel .fstage .ex{font-family:var(--font-text);font-size:1rem;margin-top:6px;color:var(--muted)}
+/* choice discovery question */
+.cq{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.cq .sent{font-family:var(--font-text);font-size:1.25rem;line-height:1.5;margin:0 0 12px}
+.cq ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.cq button{width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:1rem}
+.cq button.ok{background:var(--ok-soft);border-color:var(--ok)}
+.cq button.bad{background:var(--bad-soft);border-color:var(--bad)}
+.cq .why{display:block;margin-top:6px;font-size:.92rem;color:var(--muted)}
+/* gap lists and fix list */
+.gl-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.gl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.gl-main{display:flex;gap:14px;align-items:baseline}
+.num{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted);transform:translateY(-2px)}
+.gl-text{margin:0;font-family:var(--font-text);font-size:clamp(1.1rem,2.3vw,1.35rem);line-height:2;flex:1}
+.gl-text .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+input.gap{font:inherit;font-family:var(--font-text);color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:0 8px;margin:0 4px;text-align:center;min-width:3em;max-width:100%}
+input.wide{font:inherit;font-family:var(--font-text);font-size:1.2rem;color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:6px 10px;width:100%;margin-top:8px}
+input.gap.ok,input.wide.ok{border-bottom-color:var(--ok);background:var(--ok-soft)}
+input.gap.bad,input.wide.bad{border-bottom-color:var(--bad);background:var(--bad-soft)}
+.gl-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 0 42px}
+.answer{margin:14px 0 0 42px;padding-top:14px;border-top:1px dashed var(--line)}
+.answer p{margin:6px 0}
+.fix{font-family:var(--font-text);font-size:1.1rem}
+.why{color:var(--muted);font-size:.95rem}
+.res{font-size:.9rem;font-weight:500}
+.bad-s{font-family:var(--font-text);font-size:1.3rem;margin:0;text-decoration:underline wavy var(--bad);text-underline-offset:5px}
+/* calendars */
+.calcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.calcard h3{margin:0 0 2px}
+.calcard .role{color:var(--muted);margin:0 0 10px;font-size:.95rem}
+.calcard ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:6px;font-family:var(--font-text);font-size:1.05rem}
+.calcard li{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+/* speaking + game */
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.checks label{display:flex;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:1.1rem;cursor:pointer}
+.checks input{width:22px;height:22px;accent-color:var(--accent)}
+.srcs{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.95rem}
+.srcs a{color:var(--accent)}
+/* teacher notes */
+.tnote{margin:0 0 18px;padding:14px 18px;border-radius:14px;background:var(--warm);border:1px dashed var(--muted);font-size:.95rem}
+.tnote b.t{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.tnote ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.tbadge{position:fixed;right:12px;bottom:12px;background:var(--warm);border:1px solid var(--muted);border-radius:999px;padding:4px 12px;font-size:.8rem}
+@media (max-width:600px){
+  body{font-size:17px}
+  .card{padding:16px}
+  .match{grid-template-columns:1fr}
+  .gl-meta,.answer{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap hl-w" id="app">
+  <ol class="steps" id="steps" aria-label="Lesson screens"></ol>
+  <p class="warn" id="novoice" role="alert" hidden>This browser cannot speak. Open the page in Chrome or Edge.</p>
+
+  <main>
+    <!-- 1 -->
+    <section class="screen" id="s-home" hidden>
+      <p class="eyebrow">Warm-up</p>
+      <h1>Homework and last lesson</h1>
+      <p class="lead">Before we start, let's talk about Homework 2 and the happiness lesson.</p>
+      <div class="card" style="margin-top:22px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0 0 10px">Tell me about Homework 2.</p>
+        <ul class="qlist" style="margin-top:10px">
+          <li>How did the writing task go? And the voice message to me?</li>
+          <li>Which vague expression did you actually use this week — kind of, sort of, or something, -ish?</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--accent-soft)">
+        <p class="big-q" style="margin:0">Today: predictions — other people's, and your own — and how much control any of us really have over the future.</p>
+      </div>
+    </section>
+    <!-- 2 -->
+    <section class="screen" id="s-ball" hidden>
+      <p class="eyebrow">Warm-up game</p>
+      <h1>Ask the magic ball</h1>
+      <p class="lead">Pick a question below, then press the ball. It gives a different kind of answer every time.</p>
+      <div class="qchips" id="sampleQ"></div>
+      <div class="card ball">
+        <div class="ballface"><span class="balltext" id="ballText">Pick a question, then press the ball.</span></div>
+        <button type="button" class="btn primary" id="askBall">🔮 Ask the magic ball</button>
+      </div>
+      <div class="card" style="margin-top:20px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0 0 10px">So — how much of your future do you think you can really control?</p>
+        <p style="margin:0">Most people are "planners": we put things straight into the calendar. But do you actually follow your own calendar? Do you?</p>
+      </div>
+    </section>
+    <!-- 3 -->
+    <section class="screen" id="s-words" hidden>
+      <p class="eyebrow">New words</p>
+      <h1>Match the words</h1>
+      <p class="lead">You will meet these words in the next stages, about two real people and their predictions. Tap a word, then tap its meaning.</p>
+      <div style="margin-top:22px" id="matcher"></div>
+      <div class="card" style="margin-top:20px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0;font-size:1.4rem">Which of these words do you already use at work, in English or in Ukrainian?</p>
+      </div>
+    </section>
+    <!-- 4 -->
+    <section class="screen" id="s-mono" hidden>
+      <p class="eyebrow">Two real people</p>
+      <h1>How they see their own future</h1>
+      <p class="lead">Two real people, from very different fields, talking about their own lives and predictions. Read or listen, then say: do you believe it?</p>
+      <div class="legend" style="display:flex;flex-wrap:wrap;gap:10px 22px;margin:14px 0 6px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px">
+        <label style="display:inline-flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="showVocab" checked style="width:20px;height:20px;accent-color:var(--accent)"> Show new words</label>
+      </div>
+      <p class="small" style="margin:0 0 14px">Both are imagined monologues, based on each person's real, public statements and research — not exact quotes. Sources on the last screen.</p>
+      <div id="monoDeck"></div>
+    </section>
+    <!-- 5 -->
+    <section class="screen" id="s-funnel" hidden>
+      <p class="eyebrow">Grammar</p>
+      <h1>From a guess to a done deal</h1>
+      <p class="lead">Fill the gaps with sentences from what you just read. Then decide what three ready-made sentences are really saying.</p>
+      <h2>Fill the gaps</h2>
+      <p class="hint">These are the exact sentences from the two monologues. Write the missing words.</p>
+      <ol class="gl-list" id="funnelGaps"></ol>
+      <h2>What is each sentence really saying?</h2>
+      <p class="hint">Read each sentence. Is it a guess, a decision, or something already arranged? Choose — wrong answers explain why too.</p>
+      <div id="funnelCQ"></div>
+      <div class="card" id="funnelReveal" hidden style="background:var(--accent-soft)">
+        <p class="big-q" style="margin:0 0 10px">The pattern</p>
+        <div class="funnel" id="funnelBoxes"></div>
+        <p class="small" style="margin:8px 0 0">The more certain and fixed something is, the more "arranged" the grammar sounds.</p>
+      </div>
+      <p style="margin-top:4px"><button type="button" class="btn" id="revealBtn">Show the pattern</button></p>
+    </section>
+    <!-- 6 -->
+    <section class="screen" id="s-drill" hidden>
+      <p class="eyebrow">Practice</p>
+      <h1>Guess, decide, or already arranged?</h1>
+      <p class="lead">Now train it: choose the right form, and catch the mistakes.</p>
+      <h2>A. Choose the form</h2>
+      <p class="hint">Write the correct future form in the gap.</p>
+      <ol class="gl-list" id="drillGaps"></ol>
+      <h2>B. Find the mistake</h2>
+      <p class="hint">Each sentence has one mistake in the future form. Write the correct sentence.</p>
+      <ol class="gl-list" id="drillFix"></ol>
+    </section>
+    <!-- 7 -->
+    <section class="screen" id="s-final" hidden>
+      <p class="eyebrow">Speaking</p>
+      <h1>Calendars, and one more prediction</h1>
+      <p class="lead">Use will, going to and the present continuous. Tell me real sentences, not just one word.</p>
+      <h2>Part A. Three people, three calendars</h2>
+      <p class="hint">For each person: what is she or he going to do this week? What's already fixed? What kind of person is this — and will they actually follow the plan?</p>
+      <div id="calendars"></div>
+      <h2>Part B. One more prediction — something new</h2>
+      <p class="hint">Press the button. A topic appears — something we haven't talked about yet today. Make a prediction about it.</p>
+      <div class="card" style="text-align:center">
+        <p class="small" style="margin:0 0 6px">Your topic</p>
+        <p class="big-q" id="gameTopic" style="margin:0 0 12px">Press the button</p>
+        <button type="button" class="btn primary" id="gameBtn">Draw a card</button>
+      </div>
+      <h2>What can you do now?</h2>
+      <ul class="checks" id="checks"></ul>
+      <h2>Sources</h2>
+      <ul class="srcs" id="srcs"></ul>
+      <p class="small">The two monologues are based on real, public statements and published research, checked in November 2026 — being widely reported doesn't mean something is true, which is exactly why we discussed it.</p>
+    </section>
+  </main>
+
+  <nav class="controls" style="display:flex;margin-top:34px;justify-content:space-between" aria-label="Next and previous screen">
+    <button type="button" class="btn" id="prevScreen">← Back</button>
+    <button type="button" class="btn primary" id="nextScreen">Next →</button>
+  </nav>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const apo=s=>s.replace(/'/g,'’');
+const strip=s=>s.replace(/\[\[|\]\]|\{\{|\}\}/g,'');
+const mk=s=>apo(s).replace(/\{\{(.+?)\}\}/g,'<mark class="w">$1</mark>').replace(/\[\[(.+?)\]\]/g,'$1');
+const answersOf=s=>[...s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+const norm=s=>String(s||'').toLowerCase().replace(/[’`]/g,"'").replace(/[.!?,]+$/,'').replace(/^-/,'').replace(/\bwon't\b/g,'will not').replace(/n't\b/g,' not').replace(/'m\b/g,' am').replace(/'re\b/g,' are').replace(/'ll\b/g,' will').replace(/'s\b/g,' is').replace(/\s+/g,' ').trim();
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const ICON_SPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_STOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+/* ---------- content ---------- */
+/* {{x}} new word, [[x]] gap answer (gapList/fixList only) */
+const PAIRS=[
+ ["to foresee","to know or guess that something will happen, before it does"],
+ ["likelihood","how probable something is; the chance that it will happen"],
+ ["far-fetched","very hard to believe; almost like science fiction"],
+ ["to come true","to actually happen, after being predicted or hoped for"],
+ ["skeptical (about something)","not easily convinced; doubting that something is true"],
+ ["to speculate","to guess about something without having all the facts"],
+ ["a breakthrough","an important discovery that suddenly solves a difficult problem"],
+ ["a game changer","something that completely changes the way people do things"],
+ ["inevitable","certain to happen; impossible to avoid"]
+];
+const W_ORDER=[3,0,6,1,8,4,7,2,5], E_ORDER=[5,2,7,4,1,8,0,6,3];
+
+/* ---------- magic ball: question -> 3 tailored answers (will / going to / present continuous) ---------- */
+const BALLQ=[
+ {q:"Will I travel abroad next year?",a:["The mist is unclear... but I sense you will, eventually.","The signs are strong — you're going to take that trip sooner than you expect.","Look closer... you're already planning it, aren't you?"]},
+ {q:"Will I get a pay rise this year?",a:["Perhaps. I feel it will happen — but patience is needed.","The signs are good — you're going to get some good news before long.","Interesting... someone is already talking about it, this very week."]},
+ {q:"Will it be sunny this weekend?",a:["The weather spirits are undecided — it will probably be fine.","Everything points to yes — it's going to be a lovely couple of days.","The clouds are already clearing, as we speak."]},
+ {q:"Will AI take over my job?",a:["Some things will change, but not everything. Don't worry just yet.","The signs are clear — you're going to need a few new skills soon.","Right now, as we speak, people are already adapting to this."]},
+ {q:"Will I ever win the lottery?",a:["Unlikely, I'm afraid... though I could be wrong.","There's a small chance — you're going to try again, at least.","Ha! Right now, somebody close to you is already buying a ticket."]}
+];
+
+const MONO=[
+ {label:"The man who takes 100 pills a day",mode:"listen",
+  text:"My name's Ray, and I'm a computer scientist. I think I will actually live to see the Singularity — maybe even by 2029, when machines will finally match human intelligence. Some people call that {{far-fetched}}; I call it exponential growth, and I love it. That's why I am going to keep refining my supplement routine every year — somewhere around 100 pills a day these days! This Thursday, I am going in for my regular treatment at the clinic, like I do every week. Call it {{inevitable}}, or call it a {{breakthrough}} waiting to happen — either way, I'm enjoying the ride.",
+  qs:["Do you believe any of this? Why or why not?","Would you ever try something like this yourself?"]},
+ {label:"The scientist who keeps raising the alarm",mode:"read",
+  text:"I'm a climate scientist, and I've spent more than three decades warning people about this. I believe sea levels will rise much faster than most people expect — maybe several metres within just a few decades, not centuries. A lot of my own colleagues are {{skeptical}} about my numbers, and think I'm exaggerating. Maybe I am. But I am going to keep publishing this research anyway. This week, I am meeting some younger scientists at my institute to go through the new data together. Nobody can truly {{foresee}} exactly how fast this will happen — I'd rather be ready too early than too late.",
+  qs:["Do you find this more alarming or exaggerated? Why?","Does it matter that some of his own colleagues disagree with him?"]}
+];
+
+/* ---------- screen 5: funnel ---------- */
+const FUNNEL_GAPS=[
+ {s:"I think I [[will]] actually live to see the Singularity.",h:"will"},
+ {s:"Machines [[will]] finally match human intelligence, I believe.",h:"will"},
+ {s:"I [[am going to]] keep refining my supplement routine every year.",h:"going to"},
+ {s:"This Thursday I [[am going]] in for my regular treatment at the clinic.",h:"present continuous"},
+ {s:"I believe sea levels [[will]] rise much faster than most people expect.",h:"will"},
+ {s:"I [[am going to]] keep publishing this research anyway.",h:"going to"},
+ {s:"This week, I [[am meeting]] some younger scientists at my institute.",h:"present continuous"},
+ {s:"I'm not sure anyone can truly foresee exactly how fast this [[will]] happen.",h:"will"}
+];
+const FUNNEL_CQ=[
+ {s:"I think I'll actually live to see the Singularity.",
+  options:[
+   {label:"Just a guess or a feeling about the future.",correct:true,why:"Right. There's no fixed plan or evidence here — just a personal belief."},
+   {label:"A decision he's already made.",correct:false,why:"A decision would sound more like 'I'm going to...'. This is just a hope or belief."},
+   {label:"Something already fixed and arranged.",correct:false,why:"Nothing here is booked or scheduled — it's a guess about a distant future."}
+  ]},
+ {s:"I'm going to keep refining my supplement routine every year.",
+  options:[
+   {label:"Just a guess or a feeling about the future.",correct:false,why:"A guess with no plan would use will, not going to."},
+   {label:"A decision he's already made.",correct:true,why:"Right. This is a plan he's committed to, even without a specific date."},
+   {label:"Something already fixed and arranged, with a specific date.",correct:false,why:"There's no specific date here — that would need the present continuous."}
+  ]},
+ {s:"This Thursday I'm going in for my regular treatment at the clinic.",
+  options:[
+   {label:"Just a guess or a feeling about the future.",correct:false,why:"A guess wouldn't name a specific day like 'this Thursday'."},
+   {label:"A decision, with no specific time attached.",correct:false,why:"This does have a specific time — 'this Thursday' — so it's more fixed than that."},
+   {label:"Something already fixed and arranged, with a specific time.",correct:true,why:"Right. A named day and a routine he always follows: already arranged."}
+  ]}
+];
+const FUNNEL_STAGES=[
+ {cap:"Stage 1",nm:"Just a guess",ex:"I think I'll actually live to see the Singularity."},
+ {cap:"Stage 2",nm:"A real decision",ex:"I'm going to keep refining my supplement routine every year."},
+ {cap:"Stage 3",nm:"Already arranged",ex:"This Thursday I'm going in for my regular treatment."}
+];
+
+/* ---------- screen 6: drill ---------- */
+const DRILL_GAPS=[
+ {s:"Nobody can be sure, but I [[will probably end up]] in a completely different career by 2035.",h:"end up — will"},
+ {s:"Look at how fast things are moving — this [[is going to be]] a real game changer for our industry.",h:"be — going to"},
+ {s:"I [[am meeting]] a mentor on Friday to talk about my next step — it's already arranged.",h:"meet — present continuous"},
+ {s:"I'm not very skeptical about this one — I think it [[will come]] true sooner than people expect.",h:"come — will"},
+ {s:"We've decided: we [[are going to speculate]] less and plan more this year.",h:"speculate — going to"},
+ {s:"My sister [[is starting]] a new course on Monday — it's already booked.",h:"start — present continuous"},
+ {s:"I don't think experts [[will foresee]] every detail of this change before it happens.",h:"foresee — will"},
+ {s:"This [[is going to be]] inevitable, I think — the only question is when.",h:"be — going to"}
+];
+const DRILL_FIX=[
+ {bad:"I'm sure this will going to change everything.",fix:"I'm sure this is going to change everything.",why:"Don't mix will and going to in one verb phrase — choose one: will change, or is going to change."},
+ {bad:"Look at the data — this going to be a breakthrough.",fix:"Look at the data — this is going to be a breakthrough.",why:"Going to needs a form of be before it: is going to be, not going to be alone."},
+ {bad:"I meeting my mentor on Friday, it's already arranged.",fix:"I'm meeting my mentor on Friday, it's already arranged.",why:"The present continuous needs am/is/are before the -ing verb."},
+ {bad:"I don't think it will to happen that fast.",fix:"I don't think it will happen that fast.",why:"After will, the verb is in the base form, with no to."},
+ {bad:"We are going speculate less this year.",fix:"We are going to speculate less this year.",why:"Going to needs 'to' before the base verb: going to speculate, not going speculate."},
+ {bad:"She starting a new course on Monday.",fix:"She's starting a new course on Monday.",why:"The present continuous needs is/am/are before the -ing verb — she is starting."}
+];
+
+/* ---------- screen 7 ---------- */
+const CALENDARS=[
+ {name:"Nadia",role:"freelance graphic designer",items:["Mon — client call, 10am","Wed — dentist, 3pm","Fri — maybe gym, not sure yet","Weekend — nothing planned, totally open"]},
+ {name:"Oleh",role:"project manager",items:["Mon–Fri — back-to-back meetings, 9am–6pm","Sat — catching up on emails","Sun — family lunch, 1pm (the only thing all week that isn't work)"]},
+ {name:"Katya",role:"studying for a career change",items:["Mon / Wed / Fri — study block, flexible timing","Thu — job interview, 2pm","Weekend — study when she can"]}
+];
+const CARD_TOPICS=["Space colonies — will ordinary people live off Earth?","Will AI ever create real art or music?","Will self-driving cars replace human drivers?","Will lab-grown meat replace farm animals?","Will robots do most of the housework?","A cashless, fully digital world — will cash disappear?","Will school exams disappear completely?","Will Ukraine become a major tech hub?","Your own wildest prediction — anything at all"];
+const CAN=["I can use the present continuous for fixed arrangements about the future.","I can use going to for plans and decisions I've already made.","I can use will/won't for opinions and guesses about the future.","I can hear the difference between a guess, a decision, and something already arranged.","I can use new words: foresee, likelihood, far-fetched, come true, skeptical, speculate, breakthrough, game changer, inevitable."];
+const SRCS=[
+ ["Ray Kurzweil's prediction that machines will match human intelligence by 2029 (Singularity Hub)","https://singularityhub.com/2017/03/31/can-futurists-predict-the-year-of-the-singularity/"],
+ ["Ray Kurzweil's daily supplement and clinic routine (Entrepreneur)","https://www.entrepreneur.com/leadership/heres-what-futurist-ray-kurzweil-is-ingesting-in-his-bid/245074"],
+ ["James Hansen's prediction of several metres of sea-level rise within decades, not centuries (EcoWatch)","https://www.ecowatch.com/james-hansen-dangerous-sea-level-rise-will-occur-in-decades-not-centur-1882198301.html"]
+];
+
+/* ---------- teacher notes ---------- */
+const NOTES={
+ home:["3 min. Nothing was submitted for Homework 2 in the tracker, so check it verbally rather than on screen.","Keep this short — most of the lesson time goes to the new material."],
+ ball:["5 min, gamified. She picks a question, presses the ball, gets one of three tailored answers at random (will / going to / present continuous — not labelled as such). Fun first, grammar later.","The pivot discussion (how much control do you have, do you follow your own calendar) is the bridge into the whole lesson — don't rush it."],
+ words:["4-5 min. Matching, as usual. If stuck, give a hint. Don't over-explain — the words come back in the two monologues."],
+ mono:["8 min. Both monologues are imagined, but grounded in real public statements/research (sources on the last screen) — say that to her plainly. Read or listen, then always ask: do you believe it?","Don't flag the grammar yet. The present continuous/going to/will sentences are in there but not highlighted — she'll notice them properly next screen."],
+ funnel:["10 min. Part 1 (gaps) reuses the exact sentences she just read — this is the 'aha, I already saw this' moment. Part 2 (the 3 ready-made sentences) is the real discovery step: she decides guess / decision / already-arranged herself, without being told the grammar names first.","Only click 'Show the pattern' after she's answered the 3 — that's the reveal, and it's the one place the lesson states the rule directly."],
+ drill:["8 min. Pure production practice: choose the form, then catch the mistake. All mistakes are specifically about will/going to/present continuous form (missing be, missing to, mixed forms), not vocabulary."],
+ final:["10 min or more. Part A: three calendars, she describes what each person is going to do and whether she thinks they'll actually follow it — good for natural going to / present continuous mixed with opinion. Part B: a genuinely new topic each time, nothing repeated from today's cards or lesson 2.","Homework idea: her own week as a 'calendar' — 2 sentences with will, 2 with going to, 2 with the present continuous about her actual week."]
+};
+const SCREENS=[{id:'home',label:'Warm-up'},{id:'ball',label:'Magic ball'},{id:'words',label:'Words'},{id:'mono',label:'People'},{id:'funnel',label:'Certainty'},{id:'drill',label:'Practice'},{id:'final',label:'Predict'}];
+let teacher=/[?&]teacher\b/.test(location.search)||/^#teacher/i.test(location.hash), cur=0;
+
+/* ---------- audio ---------- */
+const synth=window.speechSynthesis;
+let voices=[], auto=null, run=0;
+const SPEEDS={slow:0.85,normal:1.0,fast:1.15};
+let cfg={vS:'',speed:'normal'};
+try{const s=JSON.parse(localStorage.getItem('ptf-voices')||'null');if(s)cfg=Object.assign(cfg,s);}catch(e){}
+const FEM=/aria|jenny|michelle|ana\b|emma|sonia|libby|maisie|natasha|clara|samantha|karen|moira|tessa|serena|fiona|victoria|allison|ava|susan|zira|hazel|catherine|female|kate|stephanie|nicky|joana|zoe/i;
+const PREF_F=[/jenny/i,/aria/i,/sonia/i,/libby/i,/michelle/i,/emma/i,/ava\b/i,/samantha/i,/karen/i,/serena/i,/female/i,/zira/i];
+const MALE_HINT=/guy|davis|tony|christopher|eric|brandon|guy\b|male/i;
+const prefBonus=(v,l)=>{const i=l.findIndex(r=>r.test(v.name||''));return i<0?0:(l.length-i)/l.length*6;};
+function voiceScore(v){let s=0,n=v.name||'';if(/natural/i.test(n))s+=8;if(/online/i.test(n))s+=4;if(/neural|premium|enhanced/i.test(n))s+=5;if(/google/i.test(n))s+=3;if(/compact|espeak|robot|whisper|zarvox|bad news|bells|boing|cellos|trinoids|organ|albert|bubbles|deranged|good news|hysterical|jester|junior|kathy|princess|ralph|superstar/i.test(n))s-=20;if(/en[-_](US|GB)/i.test(v.lang))s+=1;if(v.localService===false)s+=1;return s;}
+function loadVoices(){
+  if(!synth) return;
+  voices=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const sc=v=>voiceScore(v)+prefBonus(v,PREF_F)+(FEM.test(v.name||'')?3:0);
+  auto=voices.slice().sort((a,b)=>sc(b)-sc(a))[0]||null;
+}
+function voiceFor(){if(cfg.vS){const v=voices.find(x=>x.voiceURI===cfg.vS);if(v)return v;}return auto;}
+function setBtn(b,on){if(!b)return;b.setAttribute('aria-pressed',on?'true':'false');const l=b.querySelector('.lbl');if(l)l.textContent=on?(b.dataset.stop||'Stop'):(b.dataset.go||'Listen');}
+function clearActive(){$$('.now').forEach(e=>e.classList.remove('now'));$$('[aria-pressed="true"][data-audio]').forEach(b=>setBtn(b,false));}
+function stopAll(){run++;if(synth)synth.cancel();clearActive();}
+function chunks(text){const p=text.replace(/\.\.\./g,'…').split(/(?<=[.!?…])\s+/).filter(Boolean);return p.length?p:[text];}
+function prosody(c){const w=c.trim().split(/\s+/).length,end=c.trim().slice(-1);
+  if(end==='!') return {pitch:w<=3?0.2:0.12,rate:1.04};
+  if(end==='?') return {pitch:w<=3?0.15:0.06,rate:1.0};
+  return {pitch:0,rate:1};}
+function playQueue(items,btn){
+  if(!synth) return;
+  stopAll(); const my=run; setBtn(btn,true); let i=0;
+  const nextItem=()=>{
+    if(my!==run) return;
+    if(i>=items.length){clearActive();return;}
+    const it=items[i++];
+    $$('.now').forEach(e=>e.classList.remove('now')); if(it.el) it.el.classList.add('now');
+    const cs=chunks(it.text); let k=0;
+    const nextChunk=()=>{
+      if(my!==run) return;
+      if(k>=cs.length){setTimeout(nextItem,260);return;}
+      const c=cs[k++], pr=prosody(c), u=new SpeechSynthesisUtterance(c);
+      const v=voiceFor(); if(v){u.voice=v;u.lang=v.lang;}else u.lang='en-US';
+      u.rate=Math.min(2,SPEEDS[cfg.speed]*pr.rate); u.pitch=Math.max(0.1,Math.min(2,1+pr.pitch));
+      u.onend=()=>setTimeout(nextChunk,k<cs.length?60:0);
+      u.onerror=ev=>{if(my===run&&ev.error!=='canceled'&&ev.error!=='interrupted')clearActive();};
+      try{synth.resume();}catch(e){}
+      synth.speak(u);
+    };
+    nextChunk();
+  };
+  setTimeout(nextItem,80);
+}
+function speakOne(text,btn){
+  if(btn&&btn.getAttribute('aria-pressed')==='true'){stopAll();return;}
+  playQueue([{el:null,text}],btn);
+}
+function audioBtn(label,attrs){return `<button type="button" class="mini" data-audio ${attrs} aria-pressed="false" aria-label="${label}">${ICON_SPK}${ICON_STOP}<span class="lbl">Listen</span></button>`;}
+$('#novoice').hidden=!!synth;
+if(synth){loadVoices();if(typeof synth.addEventListener==='function')synth.addEventListener('voiceschanged',loadVoices);setTimeout(loadVoices,1500);}
+
+/* ---------- screen 2: magic ball ---------- */
+(function(){
+  let qi=-1;
+  $('#sampleQ').innerHTML=BALLQ.map((b,i)=>`<button type="button" data-q="${i}">${apo(b.q)}</button>`).join('');
+  $('#sampleQ').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    qi=+b.dataset.q;
+    $$('#sampleQ button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+  });
+  $('#askBall').addEventListener('click',()=>{
+    if(qi<0){$('#ballText').textContent='Pick a question first!';return;}
+    const ans=BALLQ[qi].a[Math.floor(Math.random()*BALLQ[qi].a.length)];
+    $('#ballText').textContent=ans;
+  });
+})();
+
+/* ---------- screen 3: matching ---------- */
+(function(){
+  const root=$('#matcher'); let selW=null, selE=null, done=new Set();
+  root.innerHTML=`<div class="mstat"><span class="chip" id="mCount">0 of ${PAIRS.length} matched</span><span><button type="button" class="btn" id="mHint">Give a hint</button> <button type="button" class="btn" id="mReset">Start again</button></span></div>
+   <div class="match"><div class="mcol" id="mW">${W_ORDER.map(i=>`<button type="button" class="mbtn mw" data-i="${i}">${apo(PAIRS[i][0])}</button>`).join('')}</div>
+   <div class="mcol" id="mE">${E_ORDER.map(i=>`<button type="button" class="mbtn me" data-i="${i}">${apo(PAIRS[i][1])}</button>`).join('')}</div></div>
+   <p class="chip ok" id="mDone" hidden style="margin-top:14px">All matched! Well done.</p>`;
+  const btn=(c,i)=>$(`#${c} [data-i="${i}"]`,root);
+  function clearSel(){$$('.sel',root).forEach(b=>b.classList.remove('sel'));selW=selE=null;}
+  function clearHint(){$$('.hint',root).forEach(b=>b.classList.remove('hint'));}
+  function tryMatch(){
+    if(selW===null||selE===null) return;
+    const w=btn('mW',selW), e=btn('mE',selE);
+    if(selW===selE){w.classList.remove('sel');e.classList.remove('sel');w.classList.add('ok');e.classList.add('ok');w.disabled=e.disabled=true;done.add(selW);clearHint();
+      $('#mCount').textContent=`${done.size} of ${PAIRS.length} matched`; if(done.size===PAIRS.length) $('#mDone').hidden=false;
+      selW=selE=null;}
+    else{w.classList.add('bad');e.classList.add('bad');const a=w,b=e;clearSel();setTimeout(()=>{a.classList.remove('bad');b.classList.remove('bad');},650);}
+  }
+  $('#mW',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('#mW .sel',root).forEach(x=>x.classList.remove('sel'));selW=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('#mE',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('#mE .sel',root).forEach(x=>x.classList.remove('sel'));selE=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('#mHint',root).addEventListener('click',()=>{clearHint();const i=W_ORDER.find(k=>!done.has(k));if(i===undefined)return;btn('mW',i).classList.add('hint');btn('mE',i).classList.add('hint');});
+  $('#mReset',root).addEventListener('click',()=>{done.clear();clearSel();clearHint();$$('.mbtn',root).forEach(b=>{b.disabled=false;b.classList.remove('ok','bad','sel','hint');});$('#mCount').textContent=`0 of ${PAIRS.length} matched`;$('#mDone').hidden=true;});
+})();
+
+/* ---------- screen 4: monologues ---------- */
+(function(){
+  const root=$('#monoDeck'); let i=0;
+  root.innerHTML=`<div class="deckbar"><span class="cnt"></span><div class="dots">${MONO.map(()=>'<i></i>').join('')}</div></div>
+   <div class="card ccard" id="mcard"></div>
+   <div class="controls" style="display:flex;gap:10px"><button type="button" class="btn prev">← Previous</button><button type="button" class="btn primary next">Next →</button></div>`;
+  const draw=()=>{
+    const c=MONO[i], L=c.mode==='listen';
+    $('#mcard').innerHTML=`<p class="who2"><b style="font-size:1.4rem">${apo(c.label)}</b> <span class="chip ${L?'':'plain'}">${L?'Listen':'Read'}</span></p>
+     ${L?`<p style="margin:0 0 14px">${audioBtn('Listen to this person','data-msay="1"')}</p>`:''}
+     <p style="margin:0 0 14px"><button type="button" class="mini" id="rtBtn" aria-expanded="false">${L?'Show the text':'Turn the card'}</button></p>
+     <div id="rtBox" hidden><p class="idea">${mk(c.text)}</p>${L?'':`<p style="margin:0 0 14px">${audioBtn('Listen to this person','data-msay="1"')}</p>`}</div>
+     <ul class="qlist qsmall">${c.qs.map(q=>`<li>${apo(q)}</li>`).join('')}</ul>`;
+    $('.cnt',root).textContent=`${i+1} of ${MONO.length}`;
+    $$('.dots i',root).forEach((d,k)=>d.classList.toggle('on',k===i));
+    $('#rtBtn').addEventListener('click',e=>{const b=e.currentTarget,box=$('#rtBox');box.hidden=!box.hidden;b.textContent=box.hidden?(L?'Show the text':'Turn the card'):(L?'Hide the text':'Turn it back');b.setAttribute('aria-expanded',box.hidden?'false':'true');});
+    $$('[data-msay]').forEach(b=>b.addEventListener('click',()=>speakOne(strip(c.text),b)));
+  };
+  const go=d=>{stopAll();i=(i+d+MONO.length)%MONO.length;draw();};
+  $('.next',root).addEventListener('click',()=>go(1)); $('.prev',root).addEventListener('click',()=>go(-1));
+  draw();
+  $('#showVocab').addEventListener('change',e=>$('#app').classList.toggle('hl-w',e.target.checked));
+})();
+
+/* ---------- gap / fix list engine ---------- */
+function gapList(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>{
+    let k=0;
+    const text=apo(it.s).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-i="${i}" data-k="${k++}" type="text" size="${Math.max(5,a.length+1)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap ${k} of sentence ${i+1}">`);
+    return `<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><p class="gl-text">${text}${it.h?`<span class="h">(${it.h})</span>`:''}</p></div>
+     <div class="gl-meta">${audioBtn('Listen to sentence '+(i+1),`data-say="${esc(strip(it.s))}"`)}<button type="button" class="mini" data-check="${i}">Check</button><button type="button" class="mini" data-show="${i}">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div></li>`;
+  }).join('');
+  const inputs=i=>$$(`input[data-i="${i}"]`,root);
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-check]');
+    if(c){const i=+c.dataset.check, ans=answersOf(data[i].s); let good=0;
+      inputs(i).forEach((inp,k)=>{const ok=norm(inp.value)===norm(ans[k]);inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&inp.value.trim()!=='');if(ok)good++;});
+      $('#'+rootId+'-res'+i).textContent=good===ans.length?'All correct':`${good} of ${ans.length} correct`;return;}
+    const s=e.target.closest('[data-show]');
+    if(s){const i=+s.dataset.show, ans=answersOf(data[i].s);inputs(i).forEach((inp,k)=>{inp.value=ans[k];inp.classList.add('ok');inp.classList.remove('bad');});$('#'+rootId+'-res'+i).textContent='';}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('gap')){$('[data-check]',e.target.closest('.gl')).click();}});
+}
+function fixList(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>`<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><div style="flex:1"><p class="bad-s">${apo(it.bad)}</p>
+     <input class="wide" data-b="${i}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write the correct sentence" aria-label="Correct sentence ${i+1}"></div></div>
+     <div class="gl-meta">${audioBtn('Listen to the correct sentence '+(i+1),`data-say="${esc(it.fix)}"`)}<button type="button" class="mini" data-bcheck="${i}">Check</button><button type="button" class="mini" data-bshow="${i}" aria-expanded="false">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div>
+     <div class="answer" id="${rootId}-ans${i}" hidden><p class="fix"><strong>Correct:</strong> ${apo(it.fix)}</p><p class="why">${apo(it.why)}</p></div></li>`).join('');
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-bcheck]');
+    if(c){const i=+c.dataset.bcheck, inp=$(`[data-b="${i}"]`,root), v=norm(inp.value), it=data[i];
+      const ok=norm(it.fix)===v;
+      inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&v!=='');$('#'+rootId+'-res'+i).textContent=ok?'Correct':'Not yet. Try again or show the answer.';return;}
+    const s=e.target.closest('[data-bshow]');
+    if(s){const i=+s.dataset.bshow, box=$('#'+rootId+'-ans'+i), op=box.hidden;box.hidden=!op;s.textContent=op?'Hide answer':'Show answer';s.setAttribute('aria-expanded',op?'true':'false');}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('wide'))$('[data-bcheck]',e.target.closest('.gl')).click();});
+}
+
+/* ---------- screen 5: funnel ---------- */
+gapList('funnelGaps',FUNNEL_GAPS);
+$('#funnelCQ').innerHTML=FUNNEL_CQ.map((q,qi)=>`<div class="cq"><p class="sent">${apo(q.s)}</p><ul>${q.options.map((o,oi)=>`<li><button type="button" data-cq="${qi}-${oi}">${apo(o.label)}<span class="why" hidden></span></button></li>`).join('')}</ul></div>`).join('');
+let cqAnswered=0;
+$('#funnelCQ').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-cq]'); if(!b) return;
+  const [qi,oi]=b.dataset.cq.split('-').map(Number), q=FUNNEL_CQ[qi];
+  if(b.disabled) return;
+  $$(`[data-cq^="${qi}-"]`,$('#funnelCQ')).forEach(x=>x.disabled=true);
+  q.options.forEach((o,i)=>{
+    const el=$(`[data-cq="${qi}-${i}"]`,$('#funnelCQ'));
+    el.classList.add(o.correct?'ok':'bad');
+    const w=$('.why',el); w.hidden=false; w.textContent=o.why;
+  });
+});
+$('#funnelBoxes').innerHTML=FUNNEL_STAGES.map(s=>`<div class="fstage"><span class="cap">${apo(s.cap)}</span><div class="nm">${apo(s.nm)}</div><div class="ex">${apo(s.ex)}</div></div>`).join('');
+$('#revealBtn').addEventListener('click',()=>{$('#funnelReveal').hidden=false;});
+
+/* ---------- screen 6: drill ---------- */
+gapList('drillGaps',DRILL_GAPS); fixList('drillFix',DRILL_FIX);
+
+/* ---------- screen 7: speaking ---------- */
+$('#calendars').innerHTML=CALENDARS.map(p=>`<div class="calcard"><h3>${apo(p.name)}</h3><p class="role">${apo(p.role)}</p><ul>${p.items.map(it=>`<li>${apo(it)}</li>`).join('')}</ul></div>`).join('');
+let gi=-1; $('#gameBtn').addEventListener('click',()=>{let n;do{n=Math.floor(Math.random()*CARD_TOPICS.length);}while(n===gi&&CARD_TOPICS.length>1);gi=n;$('#gameTopic').textContent=CARD_TOPICS[n];});
+$('#checks').innerHTML=CAN.map(c=>`<li><label><input type="checkbox"> ${apo(c)}</label></li>`).join('');
+$('#srcs').innerHTML=SRCS.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener">${apo(s[0])}</a></li>`).join('');
+
+/* ---------- global audio clicks ---------- */
+document.addEventListener('click',e=>{
+  const sb=e.target.closest('[data-say]'); if(sb){speakOne(sb.dataset.say,sb);}
+});
+
+/* ---------- screens, notes ---------- */
+$('#steps').innerHTML=SCREENS.map((s,i)=>`<li><button type="button" data-go="${i}"><span class="n">${i+1}</span>${s.label}</button></li>`).join('');
+function drawNotes(){
+  $$('.tnote').forEach(n=>n.remove()); $$('.tbadge').forEach(n=>n.remove());
+  if(!teacher) return;
+  SCREENS.forEach(s=>{const sec=$('#s-'+s.id);const h=document.createElement('div');h.className='tnote';
+    h.innerHTML=`<b class="t">Teacher notes. Not for the student.</b><ul>${NOTES[s.id].map(n=>`<li>${apo(n)}</li>`).join('')}</ul>`;
+    sec.prepend(h);});
+  const b=document.createElement('div');b.className='tbadge';b.textContent='Teacher window';document.body.appendChild(b);
+}
+function go(i,fromSync){
+  stopAll(); cur=Math.max(0,Math.min(SCREENS.length-1,i));
+  SCREENS.forEach((s,k)=>{$('#s-'+s.id).hidden=k!==cur;});
+  $$('#steps button').forEach((b,k)=>{if(k===cur)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  $('#prevScreen').disabled=cur===0; $('#nextScreen').disabled=cur===SCREENS.length-1;
+  $('#nextScreen').textContent=cur<SCREENS.length-1?`Next: ${SCREENS[cur+1].label} →`:'The end';
+  $('#prevScreen').textContent=cur>0?`← ${SCREENS[cur-1].label}`:'← Back';
+  if(!fromSync){try{history.replaceState(null,'','#'+(teacher?'teacher-':'')+(cur+1));}catch(e){}}
+  window.scrollTo(0,0);
+}
+$('#steps').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go);});
+$('#prevScreen').addEventListener('click',()=>go(cur-1));
+$('#nextScreen').addEventListener('click',()=>go(cur+1));
+document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||'')) return;
+  if(e.key==='ArrowRight'){go(cur+1);} else if(e.key==='ArrowLeft'){go(cur-1);}
+});
+window.addEventListener('pagehide',stopAll);
+drawNotes();
+{const m=(location.hash||'').match(/(\d+)$/); go((m?parseInt(m[1],10):1)-1,true);}
+</script>
+</body>
+</html>

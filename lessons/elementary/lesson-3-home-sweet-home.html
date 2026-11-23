@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Sweet Home | there is / there are</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --vocab:#b4ead9; --vocab-ink:#0d3a2e;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1; --warm:#fff3d6;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+    --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52;
+    --vocab:#1c5a4c; --vocab-ink:#c3f6e7;
+    --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c; --warm:#3a3016;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5}
+.wrap{max-width:940px;margin:0 auto;padding:20px 16px 72px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:0;list-style:none}
+.steps button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px 6px 8px;font-size:.9rem}
+.steps .n{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:.8rem;font-weight:700}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps button[aria-current="step"] .n{background:rgba(255,255,255,.22);color:inherit}
+.warn{margin:8px 0;padding:10px 14px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:.95rem}
+.eyebrow{margin:18px 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+h2{margin:32px 0 8px;font-size:1.3rem;font-weight:700}
+h3{margin:0 0 6px;font-size:1.15rem}
+.lead{margin:12px 0 0;color:var(--muted);max-width:62ch}
+.hint{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+.small{font-size:.85rem;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:.9rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg,.play svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+mark.w{background:transparent;color:inherit;padding:0}
+.hl-w mark.w{background:var(--vocab);color:var(--vocab-ink);padding:1px 4px;border-radius:4px}
+.big-q{font-family:var(--font-text);font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.35;margin:0 0 14px;text-wrap:balance}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.qlist li{padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-family:var(--font-text);font-size:1.3rem;line-height:1.4}
+.match{display:grid;grid-template-columns:1fr 1.5fr;gap:14px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mbtn{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font-size:1.05rem;line-height:1.35}
+.mw{font-weight:700;font-size:1.15rem}
+.mbtn.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.mbtn.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.mbtn.bad{background:var(--bad-soft);border-color:var(--bad)}
+.mbtn.hint{outline:3px dashed var(--accent);outline-offset:2px}
+.mstat{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+.pbank{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 14px;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--line)}
+.pic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pic-card{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:0;overflow:hidden;display:block;width:100%}
+.pic-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+.pic-card .ptag{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.72);color:#fff;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.pic-card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.pic-card.ok{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok) inset}
+.pic-card.bad{border-color:var(--bad);box-shadow:0 0 0 2px var(--bad) inset}
+.pic-card.hint{outline:3px dashed var(--accent);outline-offset:2px}
+.shot{width:100%;border-radius:14px;display:block;margin:0 0 14px;max-height:280px;object-fit:cover}
+.deckbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.ccard{min-height:220px}
+.who2{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:1.05rem}
+.idea{font-family:var(--font-text);font-size:clamp(1.15rem,2.5vw,1.45rem);line-height:1.65;margin:0 0 12px}
+.qsmall li{font-size:1.05rem;padding:10px 14px}
+.cq{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.cq .sent{font-family:var(--font-text);font-size:1.25rem;line-height:1.5;margin:0 0 12px}
+.cq ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.cq button[data-cq]{width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:1rem}
+.cq button[data-cq].ok{background:var(--ok-soft);border-color:var(--ok)}
+.cq button[data-cq].bad{background:var(--bad-soft);border-color:var(--bad)}
+.cq.answered button[data-cq]{pointer-events:none}
+.cq .why{display:block;margin-top:6px;font-size:.92rem;color:var(--muted)}
+.gl-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.gl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.gl-main{display:flex;gap:14px;align-items:baseline}
+.num{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted);transform:translateY(-2px)}
+.gl-text{margin:0;font-family:var(--font-text);font-size:clamp(1.1rem,2.3vw,1.35rem);line-height:2;flex:1}
+.gl-text .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+input.gap{font:inherit;font-family:var(--font-text);color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:0 8px;margin:0 4px;text-align:center;min-width:3em;max-width:100%}
+input.wide{font:inherit;font-family:var(--font-text);font-size:1.2rem;color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:6px 10px;width:100%;margin-top:8px}
+input.gap.ok,input.wide.ok{border-bottom-color:var(--ok);background:var(--ok-soft)}
+input.gap.bad,input.wide.bad{border-bottom-color:var(--bad);background:var(--bad-soft)}
+.gl-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 0 42px}
+.answer{margin:14px 0 0 42px;padding-top:14px;border-top:1px dashed var(--line)}
+.answer p{margin:6px 0}
+.fix{font-family:var(--font-text);font-size:1.1rem}
+.why{color:var(--muted);font-size:.95rem}
+.res{font-size:.9rem;font-weight:500}
+.bad-s{font-family:var(--font-text);font-size:1.3rem;margin:0;text-decoration:underline wavy var(--bad);text-underline-offset:5px}
+.ftable{width:100%;border-collapse:collapse;margin:10px 0 18px}
+.ftable th,.ftable td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+.ftable th{background:var(--accent-soft);color:var(--accent);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+.ftable td{font-family:var(--font-text);font-size:1.05rem}
+.ftable .person{font-family:var(--font-ui);font-weight:700;font-size:.95rem;white-space:nowrap}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.bank .chip-w{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-size:1rem}
+.bank .chip-w.used{opacity:.35;pointer-events:none}
+.build-area{min-height:52px;border:2px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.build-area .chip-w{background:var(--accent-soft);border-color:var(--accent)}
+.spot{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.spot .sent{font-family:var(--font-text);font-size:1.2rem;margin:0 0 10px}
+.callout{display:flex;gap:14px;background:var(--warm);border:1px solid #e3c766;border-radius:14px;padding:16px 20px;margin-bottom:18px}
+.callout .cicon{flex:none;width:30px;height:30px;border-radius:50%;background:#e3c766;color:#3a2e05;display:grid;place-items:center;font-weight:700;font-size:1rem}
+.callout .cbody{flex:1}
+.callout .ctitle{font-weight:700;margin:0 0 6px;font-size:1.05rem}
+.callout .citems{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:10px}
+.callout .citems li{padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.callout .cword{font-weight:700;margin-right:6px}
+.callout .cex{display:block;margin-top:4px;font-family:var(--font-text);font-size:1.02rem;color:var(--ink)}
+.tnote{margin:0 0 18px;padding:14px 18px;border-radius:14px;background:var(--warm);border:1px dashed var(--muted);font-size:.95rem}
+.tnote b.t{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.tnote ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.tbadge{position:fixed;right:12px;bottom:12px;background:var(--warm);border:1px solid var(--muted);border-radius:999px;padding:4px 12px;font-size:.8rem}
+.dial{display:grid;gap:12px}
+.dline{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.dline .spk{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.dline p{margin:0;font-family:var(--font-text);font-size:1.1rem;line-height:1.5;flex:1}
+.dline.flag p{text-decoration:underline wavy var(--bad);text-underline-offset:4px}
+.dline.now{border-color:var(--accent);background:var(--accent-soft)}
+@media (max-width:600px){
+  body{font-size:17px}
+  .card{padding:16px}
+  .match{grid-template-columns:1fr}
+  .pic-grid{grid-template-columns:repeat(2,1fr)}
+  .gl-meta,.answer{margin-left:0}
+  .ftable{font-size:.9rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap hl-w" id="app">
+  <ol class="steps" id="steps" aria-label="Lesson screens"></ol>
+  <p class="warn" id="novoice" role="alert" hidden>This browser cannot speak. Open the page in Chrome or Edge.</p>
+
+  <main>
+    <section class="screen" id="s-warmup" hidden>
+      <p class="eyebrow">Warm-up</p>
+      <h1>Last time, last week</h1>
+      <p class="lead">A quick check of your homework before we start something new.</p>
+      <div class="card">
+        <p class="lead" style="margin-top:0">In the video: which man is a good match for her, and why? Which one isn't a good match, and why not?</p>
+      </div>
+      <h2>Three sentences</h2>
+      <p class="hint">Decide the whole verb form yourself — the hint only gives the base verb.</p>
+      <div id="warmupGaps"></div>
+      <h2>Three words</h2>
+      <p class="hint">Read the clue, then fill in the word it describes.</p>
+      <div id="warmupWords"></div>
+    </section>
+
+    <section class="screen" id="s-topic" hidden>
+      <p class="eyebrow">Topic</p>
+      <h1>Home, sweet home</h1>
+      <p class="lead">A few questions to get us talking before the new words and grammar.</p>
+      <div id="topicBody">
+        <ol class="qlist">
+          <li>What is your favourite room in your home? Why?</li>
+          <li>Do you like your home? Why or why not?</li>
+          <li>Which room in your home do you like, and why?</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="screen" id="s-rooms" hidden>
+      <p class="eyebrow">New words</p>
+      <h1>Rooms in a home</h1>
+      <p class="lead">First, the big spaces. Match each picture to its room name.</p>
+      <div id="roomsPicture"></div>
+    </section>
+
+    <section class="screen" id="s-vocab" hidden>
+      <p class="eyebrow">New words</p>
+      <h1>Around the home</h1>
+      <p class="lead">Now the smaller things inside those rooms. Match the pictures to the words, then choose the best meaning for the rest.</p>
+      <div id="vocabPicture"></div>
+      <div id="vocabBody"></div>
+      <h2>Quick recheck</h2>
+      <p class="hint">The 3 hardest words — same idea, different sentence. Fill them in yourself.</p>
+      <div id="vocabRecheck"></div>
+    </section>
+
+    <section class="screen" id="s-text" hidden>
+      <p class="eyebrow">Text</p>
+      <h1>A phone call about a new flat</h1>
+      <p class="lead">Two friends, A and B. A has a new flat. Two lines below have a mistake — can you hear or read which ones?</p>
+      <div id="textBody">
+        <img class="shot" src="https://images.unsplash.com/photo-1722348671927-56408c927686?w=900&q=70&fit=crop&auto=format" alt="an empty room with a high ceiling and large windows, like the flat in the story">
+        <p style="margin:0 0 14px"><button type="button" class="mini" id="dialoguePlayBtn" data-audio aria-pressed="false" aria-label="Listen to the whole dialogue"><svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg><span class="lbl">Listen to the dialogue</span></button></p>
+        <div class="dial">
+          <div class="dline"><span class="spk">A</span><p>Hi! Guess what — I have a new flat now!</p></div>
+          <div class="dline"><span class="spk">B</span><p>Wow! How is it?</p></div>
+          <div class="dline"><span class="spk">A</span><p>It's small, but really <mark class="w">cosy</mark>. There's a lovely <mark class="w">view</mark> from the kitchen — you can see the whole street.</p></div>
+          <div class="dline"><span class="spk">B</span><p>Nice! What's the living room like?</p></div>
+          <div class="dline flag"><span class="spk">A</span><p>There's a soft <mark class="w">rug</mark> in the middle, and there is two big windows, so it's really bright.</p></div>
+          <div class="dline"><span class="spk">B</span><p>Sounds nice. What about the bedroom?</p></div>
+          <div class="dline"><span class="spk">A</span><p>That's the problem — there isn't a <mark class="w">wardrobe</mark> in the bedroom, only two <mark class="w">drawers</mark> under the bed.</p></div>
+          <div class="dline"><span class="spk">B</span><p>Oh no. Is there a <mark class="w">mirror</mark>, at least?</p></div>
+          <div class="dline flag"><span class="spk">A</span><p>Yes, there are a mirror in the hall, actually a really big one.</p></div>
+          <div class="dline"><span class="spk">B</span><p>Good. And what about the <mark class="w">ceiling</mark> — is it high?</p></div>
+          <div class="dline"><span class="spk">A</span><p>Yes, it's quite high, so the room feels very big. There's a small <mark class="w">balcony</mark> too.</p></div>
+          <div class="dline"><span class="spk">B</span><p>Perfect for coffee in the morning! Does the <mark class="w">landlord</mark> know about the wardrobe?</p></div>
+          <div class="dline"><span class="spk">A</span><p>Not yet — maybe soon.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="s-grammar" hidden>
+      <p class="eyebrow">Grammar</p>
+      <h1>There is / there are</h1>
+
+      <h2>Part 1 — From the text</h2>
+      <p class="hint">4 sentences from what you just read: 2 have a mistake, 2 are correct.</p>
+      <p class="lead" style="margin-top:0">The verb here doesn't agree with "there" — it agrees with the noun right after it. That's the opposite of normal word order, where the subject comes first and decides the verb: here the "subject" comes <em>after</em>, so you look ahead (singular or plural?) before you choose is/are.</p>
+      <div id="discoveryMistakes"></div>
+      <div id="discoveryWhy"></div>
+
+      <h2>Part 2 — The form</h2>
+      <p class="hint">Fill in the table together.</p>
+      <table class="ftable" id="formTableBody"></table>
+
+      <div id="exceptionsBlock"></div>
+
+      <h2>Part 3 — Check-in</h2>
+      <p class="hint">5 sentences, each with a mistake in this exact grammar point.</p>
+      <ol class="gl-list" id="checkinFix"></ol>
+    </section>
+
+    <section class="screen" id="s-drill" hidden>
+      <p class="eyebrow">Practice</p>
+      <h1>There is / there are — practice</h1>
+      <p class="lead">Never give the conjugated/tense form in a hint — only the base form. You always decide yourself.</p>
+      <h2>Gap-fill</h2>
+      <div id="drillGaps"></div>
+      <h2>Correct the sentence</h2>
+      <div id="drillFix"></div>
+      <h2>Build the sentence</h2>
+      <div id="drillBuild"></div>
+    </section>
+
+    <section class="screen" id="s-production" hidden>
+      <p class="eyebrow">Speaking</p>
+      <h1>Describe your home</h1>
+      <p class="lead">Now it's your turn.</p>
+      <div id="productionBody">
+        <div class="card">
+          <h3>1. Describe this room</h3>
+          <img class="shot" src="https://images.unsplash.com/photo-1768488314310-3742b3c75579?w=900&q=70&fit=crop&auto=format" alt="a cosy living room with a fireplace and orange chairs">
+          <p class="hint">Use there is / there are / there isn't / there aren't. At least 5 sentences.</p>
+        </div>
+        <div class="card">
+          <h3>2. Or describe your own home</h3>
+          <p class="hint">Same grammar, your own room this time.</p>
+        </div>
+        <div class="card">
+          <h3>3. Ask the teacher</h3>
+          <ol class="qlist qsmall">
+            <li>Is there a balcony where you live?</li>
+            <li>How many rooms are there in your home?</li>
+            <li>Is there a garden where you live?</li>
+          </ol>
+        </div>
+      </div>
+      <h2>What can you do now?</h2>
+      <ul class="checks" id="checks"></ul>
+      <div id="sourcesBlock"></div>
+    </section>
+  </main>
+
+  <nav class="controls" style="display:flex;margin-top:34px;justify-content:space-between" aria-label="Next and previous screen">
+    <button type="button" class="btn" id="prevScreen">← Back</button>
+    <button type="button" class="btn primary" id="nextScreen">Next →</button>
+  </nav>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const apo=s=>s.replace(/'/g,'’');
+const strip=s=>s.replace(/\[\[|\]\]|\{\{|\}\}/g,'').replace(/<br\s*\/?>/g,' ');
+const mk=s=>apo(s).replace(/\{\{(.+?)\}\}/g,'<mark class="w">$1</mark>').replace(/\[\[(.+?)\]\]/g,'$1');
+const answersOf=s=>[...s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+const norm=s=>String(s||'').toLowerCase().replace(/[’`]/g,"'").replace(/[.!?,]+$/,'').replace(/^-/,'').replace(/\bwon't\b/g,'will not').replace(/n't\b/g,' not').replace(/'m\b/g,' am').replace(/'re\b/g,' are').replace(/'ll\b/g,' will').replace(/'s\b/g,' is').replace(/\s+/g,' ').trim();
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const ICON_SPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_STOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+const synth=window.speechSynthesis;
+let voices=[], auto=null, run=0;
+const SPEEDS={slow:0.85,normal:1.0,fast:1.15};
+let cfg={vS:'',speed:'normal'};
+try{const s=JSON.parse(localStorage.getItem('lesson-voices')||'null');if(s)cfg=Object.assign(cfg,s);}catch(e){}
+const FEM=/aria|jenny|michelle|ana\b|emma|sonia|libby|maisie|natasha|clara|samantha|karen|moira|tessa|serena|fiona|victoria|allison|ava|susan|zira|hazel|catherine|female|kate|stephanie|nicky|joana|zoe/i;
+const PREF_F=[/jenny/i,/aria/i,/sonia/i,/libby/i,/michelle/i,/emma/i,/ava\b/i,/samantha/i,/karen/i,/serena/i,/female/i,/zira/i];
+const prefBonus=(v,l)=>{const i=l.findIndex(r=>r.test(v.name||''));return i<0?0:(l.length-i)/l.length*6;};
+function voiceScore(v){let s=0,n=v.name||'';if(/natural/i.test(n))s+=8;if(/online/i.test(n))s+=4;if(/neural|premium|enhanced/i.test(n))s+=5;if(/google/i.test(n))s+=3;if(/compact|espeak|robot|whisper|zarvox|bad news|bells|boing|cellos|trinoids|organ|albert|bubbles|deranged|good news|hysterical|jester|junior|kathy|princess|ralph|superstar/i.test(n))s-=20;if(/en[-_](US|GB)/i.test(v.lang))s+=1;if(v.localService===false)s+=1;return s;}
+function loadVoices(){
+  if(!synth) return;
+  voices=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const sc=v=>voiceScore(v)+prefBonus(v,PREF_F)+(FEM.test(v.name||'')?3:0);
+  auto=voices.slice().sort((a,b)=>sc(b)-sc(a))[0]||null;
+}
+function voiceFor(){if(cfg.vS){const v=voices.find(x=>x.voiceURI===cfg.vS);if(v)return v;}return auto;}
+function pickDialogueVoices(){
+  if(!voices.length) return {A:null,B:null};
+  const scored=voices.map(v=>({v,s:voiceScore(v)+prefBonus(v,PREF_F)+(FEM.test(v.name||'')?3:0),f:FEM.test(v.name||'')})).sort((a,b)=>b.s-a.s);
+  const first=scored[0];
+  const second=scored.find(x=>x.f!==first.f)||scored[1]||first;
+  return {A:first.v,B:second.v};
+}
+function setBtn(b,on){if(!b)return;b.setAttribute('aria-pressed',on?'true':'false');const l=b.querySelector('.lbl');if(l)l.textContent=on?(b.dataset.stop||'Stop'):(b.dataset.go||'Listen');}
+function clearActive(){$$('.now').forEach(e=>e.classList.remove('now'));$$('[aria-pressed="true"][data-audio]').forEach(b=>setBtn(b,false));}
+function stopAll(){run++;if(synth)synth.cancel();clearActive();}
+function chunks(text){const p=text.replace(/\.\.\./g,'…').split(/(?<=[.!?…])\s+/).filter(Boolean);return p.length?p:[text];}
+function prosody(c){const w=c.trim().split(/\s+/).length,end=c.trim().slice(-1);
+  if(end==='!') return {pitch:w<=3?0.2:0.12,rate:1.04};
+  if(end==='?') return {pitch:w<=3?0.15:0.06,rate:1.0};
+  return {pitch:0,rate:1};}
+function playQueue(items,btn){
+  if(!synth) return;
+  stopAll(); const my=run; setBtn(btn,true); let i=0;
+  const nextItem=()=>{
+    if(my!==run) return;
+    if(i>=items.length){clearActive();return;}
+    const it=items[i++];
+    $$('.now').forEach(e=>e.classList.remove('now')); if(it.el) it.el.classList.add('now');
+    const cs=chunks(it.text); let k=0;
+    const nextChunk=()=>{
+      if(my!==run) return;
+      if(k>=cs.length){setTimeout(nextItem,260);return;}
+      const c=cs[k++], pr=prosody(c), u=new SpeechSynthesisUtterance(c);
+      const v=it.voice||voiceFor(); if(v){u.voice=v;u.lang=v.lang;}else u.lang='en-US';
+      u.rate=Math.min(2,SPEEDS[cfg.speed]*pr.rate); u.pitch=Math.max(0.1,Math.min(2,1+pr.pitch));
+      u.onend=()=>setTimeout(nextChunk,k<cs.length?60:0);
+      u.onerror=ev=>{if(my===run&&ev.error!=='canceled'&&ev.error!=='interrupted')clearActive();};
+      try{synth.resume();}catch(e){}
+      synth.speak(u);
+    };
+    nextChunk();
+  };
+  setTimeout(nextItem,80);
+}
+function speakOne(text,btn){
+  if(btn&&btn.getAttribute('aria-pressed')==='true'){stopAll();return;}
+  playQueue([{el:null,text}],btn);
+}
+function audioBtn(label,attrs){return `<button type="button" class="mini" data-audio ${attrs} aria-pressed="false" aria-label="${label}">${ICON_SPK}${ICON_STOP}<span class="lbl">Listen</span></button>`;}
+document.addEventListener('click',e=>{const sb=e.target.closest('[data-say]'); if(sb){speakOne(sb.dataset.say,sb);}});
+function initDialoguePlay(){
+  const btn=$('#dialoguePlayBtn'); if(!btn) return;
+  btn.addEventListener('click',()=>{
+    if(btn.getAttribute('aria-pressed')==='true'){ stopAll(); return; }
+    const dv=pickDialogueVoices();
+    const items=$$('.dline',$('#textBody')).map(d=>{
+      const spk=(d.querySelector('.spk').textContent||'').trim();
+      return {el:d,text:d.querySelector('p').textContent,voice:spk==='A'?dv.A:dv.B};
+    });
+    playQueue(items,btn);
+  });
+}
+if($('#novoice')) $('#novoice').hidden=!!synth;
+if(synth){loadVoices();if(typeof synth.addEventListener==='function')synth.addEventListener('voiceschanged',loadVoices);setTimeout(loadVoices,1500);}
+
+function matchPairs(rootId,pairs){
+  const root=$('#'+rootId);
+  const order=i=>[...pairs.keys()].sort(()=>Math.random()-0.5);
+  const W_ORDER=order(), E_ORDER=order();
+  let selW=null, selE=null, done=new Set();
+  root.innerHTML=`<div class="mstat"><span class="chip" id="${rootId}-count">0 of ${pairs.length} matched</span><span><button type="button" class="btn" data-hint>Give a hint</button> <button type="button" class="btn" data-reset>Start again</button></span></div>
+   <div class="match"><div class="mcol" data-col="w">${W_ORDER.map(i=>`<button type="button" class="mbtn mw" data-i="${i}">${apo(pairs[i][0])}</button>`).join('')}</div>
+   <div class="mcol" data-col="e">${E_ORDER.map(i=>`<button type="button" class="mbtn me" data-i="${i}">${apo(pairs[i][1])}</button>`).join('')}</div></div>
+   <p class="chip ok" data-done hidden style="margin-top:14px">All matched! Well done.</p>`;
+  const btn=(c,i)=>$(`[data-col="${c}"] [data-i="${i}"]`,root);
+  function clearSel(){$$('.sel',root).forEach(b=>b.classList.remove('sel'));selW=selE=null;}
+  function clearHint(){$$('.hint',root).forEach(b=>b.classList.remove('hint'));}
+  function tryMatch(){
+    if(selW===null||selE===null) return;
+    const w=btn('w',selW), e=btn('e',selE);
+    if(selW===selE){w.classList.remove('sel');e.classList.remove('sel');w.classList.add('ok');e.classList.add('ok');w.disabled=e.disabled=true;done.add(selW);clearHint();
+      $('#'+rootId+'-count').textContent=`${done.size} of ${pairs.length} matched`; if(done.size===pairs.length) $('[data-done]',root).hidden=false;
+      selW=selE=null;}
+    else{w.classList.add('bad');e.classList.add('bad');const a=w,b=e;clearSel();setTimeout(()=>{a.classList.remove('bad');b.classList.remove('bad');},650);}
+  }
+  $('[data-col="w"]',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('[data-col="w"] .sel',root).forEach(x=>x.classList.remove('sel'));selW=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('[data-col="e"]',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('[data-col="e"] .sel',root).forEach(x=>x.classList.remove('sel'));selE=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('[data-hint]',root).addEventListener('click',()=>{clearHint();const i=W_ORDER.find(k=>!done.has(k));if(i===undefined)return;btn('w',i).classList.add('hint');btn('e',i).classList.add('hint');});
+  $('[data-reset]',root).addEventListener('click',()=>{done.clear();clearSel();clearHint();$$('.mbtn',root).forEach(b=>{b.disabled=false;b.classList.remove('ok','bad','sel','hint');});$('#'+rootId+'-count').textContent=`0 of ${pairs.length} matched`;$('[data-done]',root).hidden=true;});
+}
+
+function pictureMatch(rootId,data){
+  const root=$('#'+rootId);
+  const order=()=>[...data.keys()].sort(()=>Math.random()-0.5);
+  const P_ORDER=order(), W_ORDER=order();
+  let selP=null, selW=null, done=new Set();
+  root.innerHTML=`<div class="mstat"><span class="chip" id="${rootId}-count">0 of ${data.length} matched</span><span><button type="button" class="btn" data-hint>Give a hint</button> <button type="button" class="btn" data-reset>Start again</button></span></div>
+   <div class="pbank" data-col="w">${W_ORDER.map(i=>`<button type="button" class="mbtn mw" data-i="${i}">${apo(data[i].word)}</button>`).join('')}</div>
+   <div class="pic-grid" data-col="p">${P_ORDER.map(i=>`<button type="button" class="pic-card" data-i="${i}"><img src="${esc(data[i].img)}" alt="${esc(data[i].alt||'')}" loading="lazy">${data[i].tag?`<span class="ptag">${apo(data[i].tag)}</span>`:''}</button>`).join('')}</div>
+   <p class="chip ok" data-done hidden style="margin-top:14px">All matched! Well done.</p>`;
+  const btn=(c,i)=>$(`[data-col="${c}"] [data-i="${i}"]`,root);
+  function clearSel(){$$('.sel',root).forEach(b=>b.classList.remove('sel'));selP=selW=null;}
+  function clearHint(){$$('.hint',root).forEach(b=>b.classList.remove('hint'));}
+  function tryMatch(){
+    if(selP===null||selW===null) return;
+    const p=btn('p',selP), w=btn('w',selW);
+    if(selP===selW){p.classList.remove('sel');w.classList.remove('sel');p.classList.add('ok');w.classList.add('ok');p.disabled=w.disabled=true;done.add(selP);clearHint();
+      $('#'+rootId+'-count').textContent=`${done.size} of ${data.length} matched`; if(done.size===data.length) $('[data-done]',root).hidden=false;
+      selP=selW=null;}
+    else{p.classList.add('bad');w.classList.add('bad');const a=p,b=w;clearSel();setTimeout(()=>{a.classList.remove('bad');b.classList.remove('bad');},650);}
+  }
+  $('[data-col="p"]',root).addEventListener('click',ev=>{const b=ev.target.closest('.pic-card');if(!b||b.disabled)return;$$('[data-col="p"] .sel',root).forEach(x=>x.classList.remove('sel'));selP=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('[data-col="w"]',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('[data-col="w"] .sel',root).forEach(x=>x.classList.remove('sel'));selW=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('[data-hint]',root).addEventListener('click',()=>{clearHint();const i=P_ORDER.find(k=>!done.has(k));if(i===undefined)return;btn('p',i).classList.add('hint');btn('w',i).classList.add('hint');});
+  $('[data-reset]',root).addEventListener('click',()=>{done.clear();clearSel();clearHint();$$('.pic-card,.mbtn',root).forEach(b=>{b.disabled=false;b.classList.remove('ok','bad','sel','hint');});$('#'+rootId+'-count').textContent=`0 of ${data.length} matched`;$('[data-done]',root).hidden=true;});
+}
+
+function choiceTest(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((q,qi)=>`<div class="cq" data-q="${qi}"><p class="sent">${mk(q.sentence)}</p><ul>${q.options.map((o,oi)=>`<li><button type="button" data-cq="${qi}-${oi}">${apo(o.label)}<span class="why" hidden></span></button></li>`).join('')}</ul></div>`).join('');
+  root.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-cq]'); if(!b) return;
+    const card=b.closest('.cq'); if(card.classList.contains('answered')) return;
+    const [qi,oi]=b.dataset.cq.split('-').map(Number), q=data[qi], o=q.options[oi];
+    card.classList.add('answered');
+    b.classList.add(o.correct?'ok':'bad');
+    const w=$('.why',b); w.hidden=false; w.textContent=o.why||'';
+  });
+}
+
+function spotMistake(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>`<div class="spot"><p class="sent">${apo(it.sentence)}</p>
+    <input class="wide" data-i="${i}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="What's the mistake?">
+    <p style="margin-top:10px"><button type="button" class="mini" data-reveal="${i}" aria-expanded="false">Show the mistake</button></p>
+    <div class="answer" id="${rootId}-ans${i}" hidden><p class="fix"><strong>Mistake:</strong> ${apo(it.mistake)}</p><p class="why">${apo(it.why||'')}</p></div></div>`).join('');
+  root.addEventListener('click',e=>{
+    const b=e.target.closest('[data-reveal]'); if(!b) return;
+    const i=b.dataset.reveal, box=$('#'+rootId+'-ans'+i), op=box.hidden;
+    box.hidden=!op; b.textContent=op?'Hide':'Show the mistake'; b.setAttribute('aria-expanded',op?'true':'false');
+  });
+}
+
+function gapList(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>{
+    let k=0;
+    const text=apo(it.s).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-i="${i}" data-k="${k++}" type="text" size="${Math.max(5,a.length+1)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap ${k} of sentence ${i+1}">`);
+    return `<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><p class="gl-text">${text}${it.h?`<span class="h">(${it.h})</span>`:''}</p></div>
+     <div class="gl-meta"><button type="button" class="mini" data-check="${i}">Check</button><button type="button" class="mini" data-show="${i}">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div></li>`;
+  }).join('');
+  const inputs=i=>$$(`input[data-i="${i}"]`,root);
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-check]');
+    if(c){const i=+c.dataset.check, ans=answersOf(data[i].s); let good=0;
+      inputs(i).forEach((inp,k)=>{const ok=norm(inp.value)===norm(ans[k]);inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&inp.value.trim()!=='');if(ok)good++;});
+      $('#'+rootId+'-res'+i).textContent=good===ans.length?'All correct':`${good} of ${ans.length} correct`;return;}
+    const s=e.target.closest('[data-show]');
+    if(s){const i=+s.dataset.show, ans=answersOf(data[i].s);inputs(i).forEach((inp,k)=>{inp.value=ans[k];inp.classList.add('ok');inp.classList.remove('bad');});$('#'+rootId+'-res'+i).textContent='';}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('gap')){$('[data-check]',e.target.closest('.gl')).click();}});
+}
+
+function fixList(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>`<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><div style="flex:1"><p class="bad-s">${apo(it.bad)}</p>
+     <input class="wide" data-b="${i}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write the correct sentence" aria-label="Correct sentence ${i+1}"></div></div>
+     <div class="gl-meta"><button type="button" class="mini" data-bcheck="${i}">Check</button><button type="button" class="mini" data-bshow="${i}" aria-expanded="false">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div>
+     <div class="answer" id="${rootId}-ans${i}" hidden><p class="fix"><strong>Correct:</strong> ${apo(it.fix)}</p><p class="why">${apo(it.why||'')}</p></div></li>`).join('');
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-bcheck]');
+    if(c){const i=+c.dataset.bcheck, inp=$(`[data-b="${i}"]`,root), v=norm(inp.value), it=data[i];
+      const ok=norm(it.fix)===v;
+      inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&v!=='');$('#'+rootId+'-res'+i).textContent=ok?'Correct':'Not yet. Try again or show the answer.';return;}
+    const s=e.target.closest('[data-bshow]');
+    if(s){const i=+s.dataset.bshow, box=$('#'+rootId+'-ans'+i), op=box.hidden;box.hidden=!op;s.textContent=op?'Hide answer':'Show answer';s.setAttribute('aria-expanded',op?'true':'false');}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('wide'))$('[data-bcheck]',e.target.closest('.gl')).click();});
+}
+
+function buildSentence(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>{
+    const shuffled=it.words.map((w,k)=>({w,k})).sort(()=>Math.random()-0.5);
+    return `<div class="gl" data-build="${i}">
+      <p class="small" style="margin:0 0 8px">Sentence ${i+1} — tap the words in the right order</p>
+      <div class="build-area" data-area="${i}"></div>
+      <div class="bank" data-bank="${i}">${shuffled.map(x=>`<button type="button" class="chip-w" data-w="${x.k}">${apo(x.w)}</button>`).join('')}</div>
+      <div class="gl-meta" style="margin-left:0">
+        <button type="button" class="mini" data-bsreset="${i}">Clear</button>
+        <button type="button" class="mini" data-bscheck="${i}">Check</button>
+        <button type="button" class="mini" data-bsshow="${i}" aria-expanded="false">Show answer</button>
+        <span class="res" id="${rootId}-res${i}"></span>
+      </div>
+      <div class="answer" id="${rootId}-ans${i}" hidden><p class="fix">${apo(it.correct)}</p></div>
+    </div>`;
+  }).join('');
+  function order(i){return $$(`[data-area="${i}"] .chip-w`,root).map(b=>b.textContent);}
+  root.addEventListener('click',e=>{
+    const chip=e.target.closest('.chip-w');
+    if(chip && chip.closest('[data-bank]')){
+      const i=chip.closest('[data-bank]').dataset.bank;
+      $(`[data-area="${i}"]`,root).appendChild(chip); chip.classList.add('used'); chip.dataset.used='1';
+      return;
+    }
+    if(chip && chip.closest('[data-area]')){
+      chip.remove(); return;
+    }
+    const reset=e.target.closest('[data-bsreset]');
+    if(reset){const i=reset.dataset.bsreset; const area=$(`[data-area="${i}"]`,root);
+      [...area.children].forEach(c=>{c.classList.remove('used');delete c.dataset.used;$(`[data-bank="${i}"]`,root).appendChild(c);});
+      $('#'+rootId+'-res'+i).textContent=''; return;}
+    const check=e.target.closest('[data-bscheck]');
+    if(check){const i=check.dataset.bscheck, built=order(i).join(' '), it=data[i];
+      const ok=norm(built)===norm(it.correct);
+      $('#'+rootId+'-res'+i).textContent=ok?'Correct':'Not quite — try again or show the answer.';return;}
+    const show=e.target.closest('[data-bsshow]');
+    if(show){const i=show.dataset.bsshow, box=$('#'+rootId+'-ans'+i), op=box.hidden;box.hidden=!op;show.textContent=op?'Hide answer':'Show answer';show.setAttribute('aria-expanded',op?'true':'false');}
+  });
+}
+
+function formTable(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=`<thead><tr><th></th>${data.persons.map(p=>`<th class="person">${apo(p)}</th>`).join('')}</tr></thead>
+   <tbody>${data.rows.map((row,ri)=>`<tr><th class="person">${apo(row.type)}</th>${row.cells.map((c,ci)=>{
+     const id=`${rootId}-${ri}-${ci}`;
+     const text=apo(c).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-cell="${id}" type="text" size="${Math.max(5,a.length+1)}" autocomplete="off" autocapitalize="off" spellcheck="false">`);
+     return `<td>${text}<br><button type="button" class="mini" style="margin-top:6px" data-tshow="${id}">Show</button></td>`;
+   }).join('')}</tr>`).join('')}</tbody>`;
+  root.addEventListener('click',e=>{
+    const b=e.target.closest('[data-tshow]'); if(!b) return;
+    const id=b.dataset.tshow, [ri,ci]=id.split('-').slice(-2).map(Number);
+    const ans=answersOf(data.rows[ri].cells[ci]);
+    $$(`[data-cell="${id}"]`,root).forEach((inp,k)=>{inp.value=ans[k];inp.classList.add('ok');});
+  });
+}
+
+function exceptionsCallout(rootId,data){
+  const root=$('#'+rootId);
+  if(!data || !data.items || !data.items.length){ root.innerHTML=''; return; }
+  root.innerHTML=`<div class="callout"><span class="cicon" aria-hidden="true">!</span>
+    <div class="cbody"><p class="ctitle">${apo(data.title||'This works for all... except:')}</p>
+    <ul class="citems">${data.items.map(it=>`<li><span class="cword">${apo(it.word)}</span>${audioBtn('Listen to the example',`data-say="${esc(it.example)}"`)}<span class="cex">${apo(it.example)}</span></li>`).join('')}</ul>
+    </div></div>`;
+}
+
+const SCREENS=[
+  {id:'warmup',label:'Warm-up'},
+  {id:'topic',label:'Topic'},
+  {id:'rooms',label:'Rooms'},
+  {id:'vocab',label:'Words'},
+  {id:'text',label:'Text'},
+  {id:'grammar',label:'Grammar'},
+  {id:'drill',label:'Practice'},
+  {id:'production',label:'Speaking'}
+];
+const NOTES={
+  warmup:["Homework check is the video first (quick, 1-2 min) — phrased in present tense ('which man IS a good match') since Vira hasn't covered past tense yet.","Gap-fills revise present simple neg/question + be-vs-other-verb, which was taught live last time. No new vocab in the gaps — swapped the old 'balcony' example for 'flat' so nothing from Screen 3 leaks in early.","Recall words (match, it depends, shift) are from the speaking discussion, given as short dialogues rather than single sentences — 'it depends' especially needs the exchange to make sense.","'It depends' hint reworded from 'depends on the situation' to 'not always the same answer' — the old hint repeated the target word itself."],
+  topic:["Keep this short (2-3 min). Rewritten to avoid 'have you ever...' (present perfect) and 'most important' (superlative) — neither is in her coverage yet. Present simple only."],
+  rooms:["New screen, added before the objects-in-rooms vocab screen — bigger spaces first, then what's inside them, so the sequence builds logically (living room → sofa/rug; bedroom → wardrobe/drawers, etc.) instead of jumbling scales together.","8 rooms/areas, picture-matched like the objects screen: living room, bedroom, kitchen, bathroom, dining room, hallway, stairs, garage. Covers the rooms in the dialogue (living room, bedroom, kitchen view, hall) plus the other rooms/areas most homes have.","'Stairs' stands in for the multi-floor idea Adriana asked about (first floor/second floor) — a staircase is concretely photographable, while 'first floor'/'second floor' are ordinal-number phrases, not single nouns, so they don't fit this picture-matching format; raise them live instead if the student's home has more than one floor."],
+  vocab:["8 concrete, photographable nouns (wardrobe, rug, mirror, balcony, ceiling, drawer, shelf, view) are now a picture-matching game instead of text — picture-first rule: a concrete noun is shown, not glossed.","Only 2 words stay as text dialogues: landlord (a social role, not one clean photo) and cosy (a quality better carried by context than a single image).","Recheck still covers the 3 hardest: wardrobe, landlord, cosy — picture-taught words can still be recalled through a text gap-fill.","Follows the new Rooms screen, so these are now explicitly the things found inside the rooms just learned, not a flat unconnected list."],
+  text:["The two underlined (flagged) lines are the planted mistakes — 'there is two big windows' and 'there are a mirror'.","Rewrote the frame to avoid past simple ('moved in yesterday'), will-future ('I'll ask'), present perfect ('have you told'), and a comparative ('bigger than it is') — none of those are in her coverage yet, so the dialogue now stays in present simple/continuous throughout except for the target there is/are.","Added one supporting photo at the top (a room, matching the ceiling vocab shot) per the picture-first rule — home/furniture topics should fold a picture into the dialogue, not stay pure text.","Let the student try to spot the two flagged mistakes while reading/listening before moving to the grammar screen.","Audio lives ONLY here now — one 'Listen to the dialogue' button plays the whole conversation straight through (the current line highlights as it plays), not a button per line. A and B each get a different voice so it reads as a real two-person conversation, not a monologue. Removed Listen buttons from the vocab test, the grammar 'why' quiz, mistake-spotting, and all gap-fill/correct-the-sentence drills: audio belongs to the real dialogue, not to written exercises."],
+  grammar:["Part 1 pulls the two flagged lines above as the mistakes, and 'There's a soft rug...' / 'There isn't a wardrobe...' as the correct-use examples.","Added the word-order analogy as a standing lead-in for this grammar point: there is/are reverses normal subject-first order, so the student decides is/are by looking at the noun AFTER the verb, not before — this is the real trap, not just 'singular vs plural'.","Exceptions callout: uncountable nouns (furniture, money) always take 'there is', even though they can describe more than one thing — this is a real, useful trap, not manufactured."],
+  drill:["Trimmed to 3 of the 4 task types this time: gap-fill, correct-the-sentence, build-the-sentence."],
+  production:["Task 1 is now a picture description (a photo of a living room) — picture-first rule: for a picturable topic, picture-description is the default production task, ahead of question cards. There is/are describes a pictured room very naturally.","'Describe your own home' is kept as task 2, an alternative if she'd rather talk about her real flat.","Question cards (balcony/rooms/garden) are now task 3, a backup if she runs out of things to say.","Keep this screen reusable — no student-specific country/city references or photo of her actual home belong in the page itself."]
+};
+let teacher=/[?&]teacher\b/.test(location.search)||/^#teacher/i.test(location.hash), cur=0;
+$('#steps').innerHTML=SCREENS.map((s,i)=>`<li><button type="button" data-go="${i}"><span class="n">${i+1}</span>${s.label}</button></li>`).join('');
+function drawNotes(){
+  $$('.tnote').forEach(n=>n.remove()); $$('.tbadge').forEach(n=>n.remove());
+  if(!teacher) return;
+  SCREENS.forEach(s=>{const sec=$('#s-'+s.id); if(!sec) return; const h=document.createElement('div');h.className='tnote';
+    h.innerHTML=`<b class="t">Teacher notes. Not for the student.</b><ul>${(NOTES[s.id]||[]).map(n=>`<li>${apo(n)}</li>`).join('')}</ul>`;
+    sec.prepend(h);});
+  const b=document.createElement('div');b.className='tbadge';b.textContent='Teacher window';document.body.appendChild(b);
+}
+function go(i,fromSync){
+  stopAll(); cur=Math.max(0,Math.min(SCREENS.length-1,i));
+  SCREENS.forEach((s,k)=>{const sec=$('#s-'+s.id); if(sec) sec.hidden=k!==cur;});
+  $$('#steps button').forEach((b,k)=>{if(k===cur)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  $('#prevScreen').disabled=cur===0; $('#nextScreen').disabled=cur===SCREENS.length-1;
+  $('#nextScreen').textContent=cur<SCREENS.length-1?`Next: ${SCREENS[cur+1].label} →`:'The end';
+  $('#prevScreen').textContent=cur>0?`← ${SCREENS[cur-1].label}`:'← Back';
+  if(!fromSync){try{history.replaceState(null,'','#'+(teacher?'teacher-':'')+(cur+1));}catch(e){}}
+  window.scrollTo(0,0);
+}
+$('#steps').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go);});
+$('#prevScreen').addEventListener('click',()=>go(cur-1));
+$('#nextScreen').addEventListener('click',()=>go(cur+1));
+document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||'')) return;
+  if(e.key==='ArrowRight'){go(cur+1);} else if(e.key==='ArrowLeft'){go(cur-1);}
+});
+window.addEventListener('pagehide',stopAll);
+
+const WARMUP_GAPS=[
+  {s:"It's freezing outside, so she [[doesn't open]] the window.", h:"open"},
+  {s:"[[Do you clean]] your room every day?", h:"clean"},
+  {s:"[[Does he like]] his new flat?", h:"like"}
+];
+const WARMUP_WORDS=[
+  {s:"A: Is he nice?<br>B: Yes, we're a good [[match]].", h:"suit each other"},
+  {s:"A: Do you like tea or coffee?<br>B: It [[depends]].", h:"not always the same answer"},
+  {s:"A: Do you work at night?<br>B: Yes, I have a night [[shift]] today.", h:"a work time period"}
+];
+
+const ROOMS_PICTURE_PAIRS=[
+  {img:"https://images.unsplash.com/photo-1646775815042-a21ff2c5d145?w=600&q=70&fit=crop&auto=format", alt:"a living room with a sofa, armchairs and a staircase", word:"living room"},
+  {img:"https://images.unsplash.com/photo-1718717621302-a359be21a111?w=600&q=70&fit=crop&auto=format", alt:"a bedroom with a bed, a dresser and a window", word:"bedroom"},
+  {img:"https://images.unsplash.com/photo-1649083048198-f57bd8fb7a3b?w=600&q=70&fit=crop&auto=format", alt:"a kitchen with a sink, stove and a window", word:"kitchen"},
+  {img:"https://images.unsplash.com/photo-1721522007558-7c608934ca7d?w=600&q=70&fit=crop&auto=format", alt:"a bathroom with a toilet, sink and bathtub", word:"bathroom"},
+  {img:"https://images.unsplash.com/photo-1686572492535-04d5a6d2884d?w=600&q=70&fit=crop&auto=format", alt:"a dining room with a table and chairs", word:"dining room"},
+  {img:"https://images.unsplash.com/photo-1688584270169-744bd421e120?w=600&q=70&fit=crop&auto=format", alt:"a hallway with a bench and a clock on the wall", word:"hallway"},
+  {img:"https://images.unsplash.com/photo-1729932989104-a9c9fe70ee4e?w=600&q=70&fit=crop&auto=format", alt:"a staircase inside a house with a picture on the wall", word:"stairs"},
+  {img:"https://images.unsplash.com/photo-1598248691267-4a62dfdfd8a8?w=600&q=70&fit=crop&auto=format", alt:"a car parked inside a garage", word:"garage"}
+];
+const VOCAB_PICTURE_PAIRS=[
+  {img:"https://images.unsplash.com/photo-1683181181112-6ba857b1d2a9?w=600&q=70&fit=crop&auto=format", alt:"a white fitted wardrobe with closed doors in a bedroom", word:"wardrobe"},
+  {img:"https://images.unsplash.com/photo-1715518283046-54e007167620?w=600&q=70&fit=crop&auto=format", alt:"a soft rug on a wooden floor", word:"rug"},
+  {img:"https://images.unsplash.com/photo-1618220252344-8ec99ec624b1?w=600&q=70&fit=crop&auto=format", alt:"a wooden-framed mirror on a wall", word:"mirror"},
+  {img:"https://images.unsplash.com/photo-1646775815157-8645b5af4e08?w=600&q=70&fit=crop&auto=format", alt:"a balcony with a table and chairs", word:"balcony"},
+  {img:"https://images.unsplash.com/photo-1722348671927-56408c927686?w=600&q=70&fit=crop&auto=format", alt:"a room with a high, vaulted ceiling", word:"ceiling"},
+  {img:"https://images.unsplash.com/photo-1595428774991-829cfeea6267?w=600&q=70&fit=crop&auto=format", alt:"an open wooden drawer", word:"drawer"},
+  {img:"https://images.unsplash.com/photo-1622371729389-f18a9d26a84a?w=600&q=70&fit=crop&auto=format", alt:"books on a wooden shelf", word:"shelf"},
+  {img:"https://images.unsplash.com/photo-1670544659184-18fb2ec4bd77?w=600&q=70&fit=crop&auto=format", alt:"a view of a city from a window", word:"view"}
+];
+const VOCAB_TEST=[
+  {sentence:"A: Who do I ask about repairs?<br>B: The {{landlord}}.", options:[
+    {label:"the person you rent the flat from", correct:true, why:"Yes — the landlord owns the flat and rents it to you."},
+    {label:"the person who lives next door", correct:false, why:"That's a neighbour."},
+    {label:"a type of repair worker", correct:false, why:"A landlord isn't a repair worker, though they may send one."}
+  ]},
+  {sentence:"A: How's your new flat?<br>B: Small, but really {{cosy}}.", options:[
+    {label:"warm, comfortable, and nice to be in", correct:true, why:"Yes — cosy means warm and comfortable."},
+    {label:"cold and empty", correct:false, why:"That's almost the opposite of cosy."},
+    {label:"expensive", correct:false, why:"Cosy is about comfort, not price."}
+  ]}
+];
+const VOCAB_RECHECK=[
+  {s:"A: Where do you hang your coats?<br>B: Maybe a new [[wardrobe]] for the hall.", h:"furniture for clothes"},
+  {s:"A: Who do we pay rent to?<br>B: Our [[landlord]].", h:"owns the flat"},
+  {s:"A: How does this café feel?<br>B: So [[cosy]], especially in winter.", h:"warm and comfortable"}
+];
+
+const DISCOVERY_MISTAKES=[
+  {sentence:"There is two big windows, so it's really bright.", mistake:"\"is\" should be \"are\" — \"windows\" is plural.", why:"Use \"there are\" with a plural noun."},
+  {sentence:"There are a mirror in the hall, actually a really big one.", mistake:"\"are\" should be \"is\" — \"a mirror\" is singular.", why:"Use \"there is\" with a singular noun."}
+];
+const DISCOVERY_WHY=[
+  {sentence:"There's a soft {{rug}} in the middle.", options:[
+    {label:"because \"rug\" is one, singular thing", correct:true, why:"Right — one rug, so \"there's\" (there is)."},
+    {label:"because \"rug\" is plural", correct:false, why:"No — rug is singular here."},
+    {label:"because it's a question", correct:false, why:"No, it's a simple positive statement."}
+  ]},
+  {sentence:"There isn't a {{wardrobe}} in the bedroom.", options:[
+    {label:"because it's negative, and \"a wardrobe\" is singular", correct:true, why:"Right — negative + singular noun = \"there isn't\"."},
+    {label:"because \"wardrobe\" is plural", correct:false, why:"No — \"a wardrobe\" is singular."},
+    {label:"because it's a question", correct:false, why:"No, it's a negative statement, not a question."}
+  ]}
+];
+const FORM_TABLE={
+  persons:["Singular (a/one thing)","Plural (two or more)"],
+  rows:[
+    {type:"Positive", cells:["There [[is]] a sofa in the room.", "There [[are]] two chairs in the room."]},
+    {type:"Negative", cells:["There [[isn't]] a wardrobe in the bedroom.", "There [[aren't]] any windows in the hall."]},
+    {type:"Question", cells:["[[Is]] there a balcony?", "[[Are]] there any shelves?"]}
+  ]
+};
+const EXCEPTIONS={
+  title:"This works for all... except:",
+  items:[
+    {word:"furniture (uncountable)", example:"There is some furniture in the room — not \"there are furnitures\"."},
+    {word:"money (uncountable)", example:"There isn't much money in my wallet today."}
+  ]
+};
+const CHECKIN_MISTAKES=[
+  {bad:"There is three cups on the table.", fix:"There are three cups on the table.", why:"\"Cups\" is plural, so we need \"are\"."},
+  {bad:"There are a clock on the wall.", fix:"There is a clock on the wall.", why:"\"A clock\" is singular, so we need \"is\"."},
+  {bad:"Is there a chairs in the kitchen?", fix:"Are there any chairs in the kitchen?", why:"\"Chairs\" is plural, so the question needs \"are\" and \"any\"."},
+  {bad:"There isn't many pictures on the wall.", fix:"There aren't many pictures on the wall.", why:"\"Pictures\" is plural, so the negative needs \"aren't\"."},
+  {bad:"There are some furnitures in the room.", fix:"There is some furniture in the room.", why:"\"Furniture\" is uncountable — no plural \"-s\", and it takes \"is\"."}
+];
+
+const DRILL_GAPS=[
+  {s:"[[There is]] a mirror in the hallway.", h:"is/are"},
+  {s:"[[There are]] two drawers under the bed.", h:"is/are"},
+  {s:"[[There isn't]] a view from this window.", h:"is/are + not"},
+  {s:"[[Is there]] a landlord's phone number on the door?", h:"is/are question"}
+];
+const DRILL_FIX=[
+  {bad:"There is two shelves in the kitchen.", fix:"There are two shelves in the kitchen.", why:"Plural noun, needs \"are\"."},
+  {bad:"There are a cosy rug in the living room.", fix:"There is a cosy rug in the living room.", why:"Singular noun, needs \"is\"."},
+  {bad:"There isn't balconies in this building.", fix:"There aren't any balconies in this building.", why:"Plural + negative needs \"aren't\" and \"any\"."}
+];
+const DRILL_BUILD=[
+  {words:["a","ceiling","high","is","there"], correct:"There is a high ceiling."},
+  {words:["aren't","there","drawers","any","in","the","desk"], correct:"There aren't any drawers in the desk."}
+];
+
+const CAN=[
+  "I can say what is and isn't in a room using there is / there are.",
+  "I can ask Is there...? / Are there...? about a home.",
+  "I can use there is with uncountable nouns like furniture and money."
+];
+const SRCS=[];
+
+if(WARMUP_GAPS.length) gapList('warmupGaps',WARMUP_GAPS);
+if(WARMUP_WORDS.length) gapList('warmupWords',WARMUP_WORDS);
+if(ROOMS_PICTURE_PAIRS.length) pictureMatch('roomsPicture',ROOMS_PICTURE_PAIRS);
+if(VOCAB_PICTURE_PAIRS.length) pictureMatch('vocabPicture',VOCAB_PICTURE_PAIRS);
+if(VOCAB_TEST.length) choiceTest('vocabBody',VOCAB_TEST);
+if(VOCAB_RECHECK.length) gapList('vocabRecheck',VOCAB_RECHECK);
+if(DISCOVERY_MISTAKES.length) spotMistake('discoveryMistakes',DISCOVERY_MISTAKES);
+if(DISCOVERY_WHY.length) choiceTest('discoveryWhy',DISCOVERY_WHY);
+if(FORM_TABLE.rows && FORM_TABLE.rows.length) formTable('formTableBody',FORM_TABLE);
+initDialoguePlay();
+exceptionsCallout('exceptionsBlock',EXCEPTIONS);
+if(CHECKIN_MISTAKES.length) fixList('checkinFix',CHECKIN_MISTAKES);
+if(DRILL_GAPS.length) gapList('drillGaps',DRILL_GAPS);
+if(DRILL_FIX.length) fixList('drillFix',DRILL_FIX);
+if(DRILL_BUILD.length) buildSentence('drillBuild',DRILL_BUILD);
+if(CAN.length) $('#checks').innerHTML=CAN.map(c=>`<li><label><input type="checkbox"> ${apo(c)}</label></li>`).join('');
+if(SRCS.length) $('#sourcesBlock').innerHTML=`<h2>Sources</h2><ul class="srcs">${SRCS.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener">${apo(s[0])}</a></li>`).join('')}</ul>`;
+
+drawNotes();
+{const m=(location.hash||'').match(/(\d+)$/); go((m?parseInt(m[1],10):1)-1,true);}
+</script>
+</body>
+</html>

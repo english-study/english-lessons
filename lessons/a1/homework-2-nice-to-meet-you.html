@@ -1,0 +1,428 @@
+<title>Nice to Meet You Homework</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+/* Layout: one scrolling column, three numbered parts, live score chips at the top, writing boxes last. Same look as the lesson pages. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --hl:#ffe45c; --hl-ink:#17202e; --vocab:#b4ead9; --vocab-ink:#0d3a2e;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+    --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52; --hl:#5d4c00; --hl-ink:#ffe98a; --vocab:#1c5a4c; --vocab-ink:#c3f6e7;
+    --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+  --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52; --hl:#5d4c00; --hl-ink:#ffe98a; --vocab:#1c5a4c; --vocab-ink:#c3f6e7;
+  --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5}
+.wrap{max-width:820px;margin:0 auto;padding-block:22px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.eyebrow{margin:0 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.6rem);line-height:1.12;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+h2{margin:0;font-size:1.45rem;line-height:1.25}
+.lead{margin:10px 0 0;color:var(--muted)}
+.uk{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.score{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 14px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.pill b{color:var(--accent)}
+section{margin-top:30px}
+.part{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.pn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.main{display:flex;gap:14px;align-items:baseline}
+.num{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted);transform:translateY(-2px)}
+.text{margin:0;font-family:var(--font-text);font-size:clamp(1.2rem,2.6vw,1.5rem);line-height:2}
+.text .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+input.gap{font-family:var(--font-text);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:0 8px;margin:0 4px;text-align:center;min-width:3em;max-width:100%}
+input.gap.ok{border-bottom-color:var(--ok);background:var(--ok-soft)}
+input.gap.bad{border-bottom-color:var(--bad);background:var(--bad-soft)}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:8px 0 0 42px}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:.92rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.res{font-size:.92rem;font-weight:500}
+.res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
+.ctx{margin:0 0 8px;font-size:.82rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.opt{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 8px;font-size:clamp(1.8rem,6vw,2.6rem);font-weight:700}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.said{margin:10px 0 0;font-family:var(--font-text);font-size:1.2rem}
+.who{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:20px;align-items:start;margin-bottom:14px}
+.photo{aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--accent-soft)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+table.t{width:100%;border-collapse:collapse}
+table.t td{padding:8px 4px;border-bottom:1px solid var(--line)}
+table.t tr:last-child td{border-bottom:0}
+table.t td:first-child{font-weight:700;width:40%}
+.box{margin:0 0 12px;padding:12px 16px;border-radius:12px;background:var(--accent-soft);font-size:.98rem}
+.box b{display:block;margin-bottom:4px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px 8px}
+.chips span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-family:var(--font-text);font-size:1.05rem}
+.opts.four{grid-template-columns:1fr 1fr}.opt.sm{font-size:1.25rem;font-weight:600;padding:12px 8px}
+.bigl{font-family:var(--font-head);font-size:3.2rem;font-weight:800;line-height:1;margin:0 0 4px}
+.wl{display:grid;gap:12px}
+.wl .ln{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr);gap:6px 14px;align-items:center}
+.wl .lab{font-weight:700;line-height:1.25}.wl .lab small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+.wl input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:var(--font-text);font-size:1.2rem}
+@media (max-width:560px){.wl .ln{grid-template-columns:1fr}}
+textarea{width:100%;min-height:150px;resize:vertical;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--font-text);font-size:1.25rem;line-height:1.6}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:10px}
+.cnt{color:var(--muted);font-size:.92rem;font-variant-numeric:tabular-nums}
+
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 4px}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 18px;font-weight:700}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab small{font-weight:500;opacity:.8;margin-left:4px}
+/* flip deck (grammar cards) */
+.deckbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:18px 0 10px;color:var(--muted);font-size:.9rem}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.flip{perspective:1400px;cursor:pointer;border-radius:18px}
+.flip-inner{display:grid;transition:transform .5s;transform-style:preserve-3d}
+.flip-inner.on{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px 24px;min-height:340px}
+.face.back{transform:rotateY(180deg);background:var(--accent-soft)}
+.tag{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.face ol{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.face li{font-family:var(--font-text);font-size:clamp(1.2rem,2.5vw,1.5rem);line-height:1.5}
+.face li .h{font-family:var(--font-ui);font-size:.82rem;color:var(--muted);margin-left:8px;white-space:nowrap}
+.blank{display:inline-block;border-bottom:2px solid var(--ink);height:1.1em;vertical-align:baseline;margin:0 3px;min-width:2.2em}
+b.ans{color:var(--accent);font-weight:700}
+.tap{margin:16px 0 0;font-size:.82rem;color:var(--muted)}
+.note2{margin:14px 0 0;padding:10px 14px;border-radius:10px;background:var(--surface);font-size:.95rem}
+.controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+/* word cards */
+.wbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:16px 0 4px}
+.wbar select{font:inherit;font-size:.9rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:4px 8px;max-width:100%;min-width:0}
+.wbar .count{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+.wset{margin:26px 0 10px;display:flex;align-items:baseline;gap:10px}
+.wset h2{font-size:1.2rem}
+.wset span{color:var(--muted);font-size:.9rem}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.wc{perspective:900px;cursor:pointer;border-radius:14px}
+.wc-in{display:grid;transition:transform .45s;transform-style:preserve-3d}
+.wc.on .wc-in{transform:rotateY(180deg)}
+.wf{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:148px;padding:12px 12px 10px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.wf.front{background:var(--vocab);color:var(--vocab-ink)}
+.wf.back{transform:rotateY(180deg);background:var(--surface);border:1px solid var(--line)}
+.wf .big{font-size:1.35rem;font-weight:700;line-height:1.25;text-wrap:balance}
+.wf .ex{font-family:var(--font-text);font-size:.98rem;color:var(--muted);line-height:1.35}
+.wrow{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.spk{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid currentColor;background:transparent;padding:0}
+.spk svg{width:18px;height:18px}
+.kn{border:1px solid var(--line);background:transparent;border-radius:999px;padding:2px 12px;font-size:.85rem}
+.wc.known .kn{background:var(--ok);border-color:var(--ok);color:#fff}
+.wc.known .wf.front{box-shadow:inset 0 0 0 3px var(--ok)}
+#wgrids.hide-known .wc.known{display:none}
+
+@media (max-width:560px){ body{font-size:17px} .face{padding:16px 16px 20px;min-height:360px} .who{grid-template-columns:1fr} .photo{max-width:200px} .meta{margin-left:0} }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Homework · Lesson 2</p>
+  <h1>Nice to meet you</h1>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button type="button" class="tab" role="tab" data-tab="homework" aria-selected="true">Homework</button>
+    <button type="button" class="tab" role="tab" data-tab="grammar" aria-selected="false">Grammar cards <small>7</small></button>
+    <button type="button" class="tab" role="tab" data-tab="words" aria-selected="false">Word cards <small>43</small></button>
+  </nav>
+  <div id="tab-homework">
+  <p class="lead">Four parts. About fifteen minutes. Do them before the next lesson.</p>
+  <p class="uk">Чотири вправи. Приблизно п’ятнадцять хвилин. Зроби їх до наступного уроку.</p>
+  <div class="score" aria-live="polite"><span class="pill">Part 1: <b id="s0">0</b> / 6</span><span class="pill">Part 2: <b id="s1">0</b> / 6</span><span class="pill">Part 3: <b id="s2">0</b> / 6</span></div>
+
+  <section>
+    <div class="part"><span class="pn">1</span><h2>Letters</h2></div>
+    <p class="uk">Як ми читаємо цю літеру англійською? Вибери відповідь.</p>
+    <div class="list" id="ll"></div>
+  </section>
+
+  <section>
+    <div class="part"><span class="pn">2</span><h2>my, your, his, her, our, their</h2></div>
+    <p class="uk">Встав слово в пропуск. У дужках — до кого воно відноситься.</p>
+    <ol class="list" id="gl"></ol>
+  </section>
+
+  <section>
+    <div class="part"><span class="pn">3</span><h2>Which number is it?</h2></div>
+    <p class="uk">Натисни Play. Послухай і вибери число.</p>
+    <div class="list" id="nl"></div>
+  </section>
+
+  <section>
+    <div class="part"><span class="pn">4</span><h2>Write</h2></div>
+    <p class="uk">Напиши по одному реченню до кожного слова. Спочатку про Daniel, потім про себе. Потім надішли вчительці в чат.</p>
+    <div class="card" style="margin-top:14px">
+      <h2 style="font-size:1.2rem;margin-bottom:12px">A. About Daniel</h2>
+      <div class="who"><div class="photo"><img src="data:image/jpeg;data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Photo of Daniel"></div>
+        <div><p class="small" style="margin:0 0 10px">Write one sentence for each line.</p><div class="wl" id="wd"></div></div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2 style="font-size:1.2rem;margin-bottom:12px">B. About you</h2>
+      <p class="small" style="margin:0 0 8px">Write about yourself. One sentence for each line.</p>
+      <div class="wl" id="wm"></div>
+    </div>
+    <div class="row" style="margin-top:16px"><button type="button" class="btn primary" id="copy">Copy my answers</button><span class="res" id="copyMsg" role="status"></span></div>
+    <p class="uk">Натисни «Copy my answers», встав текст у чат з вчителькою і надішли.</p>
+  </section>
+</div>
+  <div id="tab-grammar" hidden>
+    <p class="lead">Seven cards with the verb to be. Fill the gaps in your head, then flip the card to check. Say every sentence out loud.</p>
+    <p class="uk">Сім карток з дієсловом to be. Заповни пропуски подумки, потім переверни картку. Кажи кожне речення вголос.</p>
+    <div id="gdeck"></div>
+  </div>
+  <div id="tab-words" hidden>
+    <p class="lead">43 words and phrases for life abroad: the shop, the kitchen, colleagues, the street. Tap a card to see the translation and an example.</p>
+    <p class="uk">43 слова і фрази для життя за кордоном. Натисни на картку, щоб побачити переклад. Коли запам’ятаєш слово, натисни «I know it».</p>
+    <div class="wbar"><button type="button" class="mini" id="rev" aria-pressed="false">Ukrainian first</button><button type="button" class="mini" id="hk" aria-pressed="false">Hide words I know</button><label class="small" for="voice">Voice</label><select id="voice"><option value="">Automatic</option></select><span class="count">Known: <span id="kc">0</span> / 43</span></div>
+    <div id="wgrids"></div>
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const apo=s=>s.replace(/'/g,'’');
+const ISPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ISTOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+/* audio */
+const synth=window.speechSynthesis; let voice=null;
+let chosen=''; try{ chosen=localStorage.getItem('hw2-voice')||''; }catch(e){}
+function pickVoice(){
+  if(!synth) return;
+  const vs=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const sc=v=>{let s=0,n=v.name||'';if(/natural/i.test(n))s+=8;if(/online/i.test(n))s+=4;if(/neural|premium|enhanced/i.test(n))s+=5;if(/google/i.test(n))s+=3;if(/aria|jenny|guy|davis|michelle|ryan|sonia|libby|samantha|daniel|karen|serena/i.test(n))s+=2;if(/compact|espeak|robot|whisper|zarvox|bad news|bells|boing|cellos|trinoids|organ|albert|bubbles|deranged|good news|hysterical|jester|junior|kathy|princess|ralph|superstar/i.test(n))s-=20;if(/en[-_](US|GB)/i.test(v.lang))s+=1;if(v.localService===false)s+=1;return s;};
+  const pick=chosen&&vs.find(v=>v.voiceURI===chosen);
+  voice=pick||vs.slice().sort((a,b)=>sc(b)-sc(a))[0]||null;
+  const sel=$('#voice'); if(sel){ sel.innerHTML='<option value="">Automatic</option>'+vs.map(v=>`<option value="${esc(v.voiceURI)}">${esc(v.name)} (${esc(v.lang)})</option>`).join(''); sel.value=pick?chosen:''; }
+}
+if(synth){ pickVoice(); if(synth.addEventListener) synth.addEventListener('voiceschanged',pickVoice); setTimeout(pickVoice,1500); }
+const AUDIO={};
+let cur=null;
+function stopClip(){ if(cur){ try{cur.pause();}catch(e){} cur.onended=null; cur=null; } }
+function clip(text,onend){ const d=AUDIO[String(text).replace(/\[\[(.+?)\]\]/g,'$1')]; if(!d) return false; stopClip(); const a=new Audio('data:audio/mpeg;base64,'+d); cur=a; a.onended=()=>{ if(cur===a) cur=null; if(onend) onend(); }; a.onerror=()=>{ if(onend) onend(); }; a.play().catch(()=>{ if(onend) onend(); }); return true; }
+function play(text,btn){
+  if(!synth&&!AUDIO[text]) return;
+  const was=btn.getAttribute('aria-pressed')==='true'; synth.cancel(); stopClip(); $$('[data-play]').forEach(b=>b.setAttribute('aria-pressed','false')); $$('[data-play] .lbl').forEach(l=>l.textContent='Play');
+  if(was) return;
+  if(!voice) pickVoice();
+  const u=new SpeechSynthesisUtterance(text); if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang='en-US'; u.rate=.85;
+  const done=()=>{btn.setAttribute('aria-pressed','false');btn.querySelector('.lbl').textContent='Play';};
+  if(AUDIO[text]){ btn.setAttribute('aria-pressed','true'); btn.querySelector('.lbl').textContent='Stop'; clip(text,done); return; }
+  u.onend=done; u.onerror=done; btn.setAttribute('aria-pressed','true'); btn.querySelector('.lbl').textContent='Stop';
+  try{synth.resume();}catch(e){} synth.speak(u);
+}
+window.addEventListener('pagehide',()=>{ if(synth) synth.cancel(); });
+
+/* part 1 */
+const GAPS=[
+ {s:'[[My]] phone is new.',h:'I'},
+ {s:'Where is [[your]] office?',h:'you'},
+ {s:'Daniel is from Canada. [[His]] car is big.',h:'he'},
+ {s:'Kasia is nineteen. [[Her]] hair is red.',h:'she'},
+ {s:'Our teacher is from Ukraine. [[Our]] lessons are fun.',h:'we'},
+ {s:'Anna and Tom are tired. [[Their]] day is long.',h:'they'}
+];
+GAPS[4]={s:'We are students. [[Our]] teacher is from Ukraine.',h:'we'};
+let got1=new Set(), got2=new Set();
+const upd=()=>{ $('#s1').textContent=got1.size; $('#s2').textContent=got2.size; };
+const ans=g=>g.s.match(/\[\[(.+?)\]\]/)[1];
+$('#gl').innerHTML=GAPS.map((g,i)=>`<li class="item"><div class="main"><span class="num">${i+1}</span><p class="text">${apo(esc(g.s)).replace(/\[\[(.+?)\]\]/,(m,a)=>`<input class="gap" data-i="${i}" type="text" size="${a.length+2}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap in sentence ${i+1}">`)}<span class="h">(${g.h})</span></p></div><div class="meta"><button type="button" class="mini" data-check="${i}">Check</button><button type="button" class="mini" data-show="${i}">Show answer</button><span class="res"></span></div></li>`).join('');
+$('#gl').addEventListener('click',e=>{
+  const c=e.target.closest('[data-check]'), s=e.target.closest('[data-show]');
+  if(c){ const i=+c.dataset.check, inp=$(`input[data-i="${i}"]`), ok=inp.value.trim().toLowerCase()===ans(GAPS[i]).toLowerCase(), r=c.parentElement.querySelector('.res');
+    inp.classList.toggle('ok',ok); inp.classList.toggle('bad',!ok&&inp.value.trim()!==''); r.textContent=ok?'Correct':'Try again'; r.className='res '+(ok?'ok':'bad');
+    if(ok&&!inp.dataset.hint) got1.add(i); upd(); }
+  if(s){ const i=+s.dataset.show, inp=$(`input[data-i="${i}"]`); inp.value=ans(GAPS[i]); inp.dataset.hint='1'; inp.classList.add('ok'); inp.classList.remove('bad'); got1.delete(i); s.parentElement.querySelector('.res').textContent=''; upd(); }
+});
+$('#gl').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.classList.contains('gap')) $(`[data-check="${e.target.dataset.i}"]`).click(); });
+
+/* part 2 */
+const NUM=[
+ {ctx:'At the hotel',s:'Your room is number fourteen.',o:[14,40],ok:14},
+ {ctx:'At the bus stop',s:'The bus is number seventy.',o:[17,70],ok:70},
+ {ctx:'At the cinema',s:'The ticket is thirteen euros.',o:[30,13],ok:13},
+ {ctx:'In a shop',s:'The book is fifty euros.',o:[15,50],ok:50},
+ {ctx:'At the station',s:'The train is nineteen euros.',o:[19,90],ok:19},
+ {ctx:'Family',s:'My father is sixty.',o:[16,60],ok:60}
+];
+$('#nl').innerHTML=NUM.map((n,i)=>`<div class="item" data-n="${i}"><p class="ctx">${n.ctx}</p><button type="button" class="mini" data-play aria-pressed="false" data-say="${esc(n.s)}">${ISPK}${ISTOP}<span class="lbl">Play</span></button><div class="opts">${n.o.map(o=>`<button type="button" class="opt" data-o="${o}">${o}</button>`).join('')}</div><p class="said" hidden>${esc(n.s)}</p></div>`).join('');
+$('#nl').addEventListener('click',e=>{
+  const p=e.target.closest('[data-play]'); if(p){ play(p.dataset.say,p); return; }
+  const b=e.target.closest('.opt'); if(!b) return;
+  const card=b.closest('.item'), i=+card.dataset.n, n=NUM[i];
+  if(card.dataset.done) return;
+  if(+b.dataset.o===n.ok){ b.classList.add('ok'); card.dataset.done='1'; $('.said',card).hidden=false; if(!card.dataset.miss) got2.add(i); upd(); }
+  else { b.classList.add('bad'); card.dataset.miss='1'; }
+});
+
+/* letters */
+const LET=[
+ {l:'C',o:['ці','сі','ка','ке'],ok:1,say:'see'},
+ {l:'I',o:['ай','і','ей','ій'],ok:0,say:'eye'},
+ {l:'E',o:['е','ей','і','ай'],ok:2,say:'ee'},
+ {l:'Y',o:['і','ігрек','ай','вай'],ok:3,say:'why'},
+ {l:'V',o:['ве','ві','дабл-ю','бі'],ok:1,say:'vee'},
+ {l:'W',o:['ві','ву','дабл-ю','в'],ok:2,say:'double you'}
+];
+let got0=new Set();
+$('#ll').innerHTML=LET.map((q,i)=>`<div class="item" data-q="${i}"><p class="ctx">Letter ${i+1}</p><p class="bigl">${q.l}</p><div class="opts four">${q.o.map((o,k)=>`<button type="button" class="opt sm" data-o="${k}">${o}</button>`).join('')}</div><p class="said" hidden><button type="button" class="spk" data-s="${esc(q.say)}" aria-label="Listen">${ISPK}</button> ${q.l} = “${q.say}”</p></div>`).join('');
+$('#ll').addEventListener('click',e=>{
+  const sp=e.target.closest('.spk'); if(sp){ sayOnce(sp.dataset.s); return; }
+  const b=e.target.closest('.opt'); if(!b) return;
+  const card=b.closest('.item'), i=+card.dataset.q, q=LET[i];
+  if(card.dataset.done) return;
+  if(+b.dataset.o===q.ok){ b.classList.add('ok'); card.dataset.done='1'; $('.said',card).hidden=false; if(!card.dataset.miss) got0.add(i); $('#s0').textContent=got0.size; }
+  else { b.classList.add('bad'); card.dataset.miss='1'; }
+});
+
+/* part 4 */
+const DAN=[['Name','Daniel','His name is …'],['Country','Canada','He is from …'],['Hair','short, black','His hair is …'],['Eyes','brown','His eyes are …'],['Hobby','football','His hobby is …']];
+const ME=[['Name','','My name is …'],['Country','nationality','I am from …'],['Hobby','','My hobby is …'],['Look','Як ти виглядаєш? What do you look like?','My hair is … My eyes are …']];
+const wline=(pre,[lab,hint,ph],i)=>`<div class="ln"><label class="lab" for="${pre}${i}">${lab}${hint?`<small>${hint}</small>`:''}</label><input id="${pre}${i}" data-k="${pre}${i}" type="text" autocomplete="off" spellcheck="false" placeholder="…"></div>`;
+$('#wd').innerHTML=DAN.map((r,i)=>wline('d',[r[0],r[1],r[2]],i)).join('');
+$('#wm').innerHTML=ME.map((r,i)=>wline('m',r,i)).join('');
+$$('.wl input').forEach(t=>{
+  const k='hw2-'+t.dataset.k;
+  try{ const v=localStorage.getItem(k); if(v) t.value=v; }catch(e){}
+  t.addEventListener('input',()=>{ try{ localStorage.setItem(k,t.value); }catch(e){} });
+});
+$('#copy').onclick=async()=>{
+  const join=(rows,pre)=>rows.map((r,i)=>r[0]+': '+$('#'+pre+i).value.trim()).join('\n');
+  const txt='About Daniel:\n'+join(DAN,'d')+'\n\nAbout me:\n'+join(ME,'m');
+  const m=$('#copyMsg'); let ok=false;
+  try{ await navigator.clipboard.writeText(txt); ok=true; }catch(e){
+    try{ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); ok=document.execCommand('copy'); ta.remove(); }catch(e2){}
+  }
+  m.textContent=ok?'Copied. Paste it in the chat.':'Could not copy. Select the text in the boxes and copy it.'; m.className='res '+(ok?'ok':'bad');
+};
+
+/* ---------- tabs ---------- */
+function sayOnce(text){ if(clip(text)) return; if(!synth) return; if(!voice) pickVoice(); synth.cancel(); const u=new SpeechSynthesisUtterance(text); if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang='en-US'; u.rate=.85; try{synth.resume();}catch(e){} setTimeout(()=>synth.speak(u),60); }
+function sayList(texts,btn){
+  if(!synth&&!texts.length) return; if(synth&&!voice) pickVoice();
+  const was=btn.getAttribute('aria-pressed')==='true'; stopClip();
+  const reset=b=>{b.setAttribute('aria-pressed','false');b.querySelector('.lbl').textContent='Listen';};
+  $$('[data-list]').forEach(reset); if(synth) synth.cancel(); if(was) return;
+  btn.setAttribute('aria-pressed','true'); btn.querySelector('.lbl').textContent='Stop'; let i=0;
+  const next=()=>{ if(btn.getAttribute('aria-pressed')!=='true') return; if(i>=texts.length){reset(btn);return;}
+    if(AUDIO[String(texts[i]).replace(/\[\[(.+?)\]\]/g,'$1')]){ const t=texts[i++]; clip(t,()=>setTimeout(next,300)); return; }
+    const u=new SpeechSynthesisUtterance(texts[i++]); if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang='en-US'; u.rate=.85;
+    u.onend=()=>setTimeout(next,300); u.onerror=()=>{}; try{synth.resume();}catch(e){} synth.speak(u); };
+  next();
+}
+const TABS=['homework','grammar','words'];
+function showTab(t){
+  if(synth) synth.cancel(); stopClip(); $$('[data-play],[data-list]').forEach(b=>{b.setAttribute('aria-pressed','false');const l=b.querySelector('.lbl');if(l)l.textContent=b.hasAttribute('data-list')?'Listen':'Play';});
+  TABS.forEach(k=>{ $('#tab-'+k).hidden=k!==t; $(`[data-tab="${k}"]`).setAttribute('aria-selected',k===t?'true':'false'); });
+  try{ history.replaceState(null,'','#'+t); }catch(e){}
+}
+$$('.tab').forEach(b=>b.onclick=()=>{ showTab(b.dataset.tab); window.scrollTo(0,0); });
+
+/* ---------- grammar cards ---------- */
+const blanks=s=>apo(esc(s)).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<span class="blank" style="min-width:${Math.max(2.2,a.length*.62)}em"></span>`);
+const filled=s=>apo(esc(s)).replace(/\[\[(.+?)\]\]/g,'<b class="ans">$1</b>');
+const plain=s=>s.replace(/\[\[|\]\]/g,'');
+const GR=[
+ {t:'I',lines:[['I [[am]] tired today.','positive'],['I [[am not]] hungry.','negative'],['I [[am]] from Ukraine.','positive'],['I [[am not]] a doctor.','negative'],['I [[am]] at work now.','positive']],
+  note:'We do not often ask a question about ourselves, so with I there are only two forms. Short: I’m tired. I’m not hungry.'},
+ {t:'you',lines:[['You [[are]] late.','positive'],['You [[are not]] busy today.','negative'],['[[Are]] you hungry?','question'],['[[Are]] you from Poland?','question'],['Are you OK? Yes, I [[am]].','short answer'],['Are you a teacher? No, I [[am not]].','short answer · negative']],
+  note:'Short: you’re late, you aren’t busy.'},
+ {t:'he / she',lines:[['He [[is]] at work.','positive'],['She [[is not]] at home.','negative'],['[[Is]] he your friend?','question'],['[[Is]] she tired?','question'],['Is he a doctor? No, he [[is not]].','short answer · negative']],
+  note:'Short: he’s, she’s, he isn’t, she isn’t.'},
+ {t:'it / things',lines:[['The cat [[is]] big.','positive'],['The phone [[is not]] new.','negative'],['[[Is]] the laptop old?','question'],['It [[is]] a small office.','positive'],['Is it your phone? Yes, it [[is]].','short answer']],
+  note:'Short: it’s, it isn’t.'},
+ {t:'we / they',lines:[['We [[are]] friends.','positive'],['We [[are not]] tired.','negative'],['[[Are]] they from Spain?','question'],['They [[are not]] at home.','negative'],['Are we late? No, we [[are not]].','short answer · negative']],
+  note:'Short: we’re, they’re, we aren’t, they aren’t.'},
+ {t:'my, your, his, her',lines:[['[[My]] eyes are green.','I · positive'],['[[Your]] phone [[is not]] new.','you · negative'],['Is [[your]] office big?','you · question'],['[[His]] hobby is football.','he · positive'],['[[Her]] hair [[is not]] short.','she · negative'],['Are [[her]] friends from Spain?','she · question']],
+  note:'my, your, his, her show whose it is: my eyes, your phone, his hobby, her hair.'},
+ {t:'our, their, question words',lines:[['[[Our]] teacher is from Ukraine.','we · positive'],['[[Their]] names [[are]] Anna and Tom.','they · positive'],['What [[is]] your name?','question'],['Where [[are]] you from?','question'],['How old [[is]] she?','question'],['What colour [[are]] his eyes?','question']],
+  note:'Short: What’s your name? Where’s the office? How old’s she? (we say: How old is she?)'}
+];
+GR[6].note='Short: What’s your name? Where are you from? our = we, their = they.';
+(function(){
+  const host=$('#gdeck'); let i=0, on=false;
+  host.innerHTML=`<div class="deckbar"><span class="cnt"></span><div class="dots">${GR.map(()=>'<i></i>').join('')}</div></div>
+   <div class="flip" role="button" tabindex="0" aria-label="Card. Press to flip."><div class="flip-inner"><div class="face front"></div><div class="face back" aria-hidden="true"></div></div></div>
+   <div class="controls"><button type="button" class="btn prev">← Previous</button><button type="button" class="btn primary fl">Flip</button><button type="button" class="btn next">Next →</button></div>`;
+  const inner=$('.flip-inner',host), fr=$('.front',host), bk=$('.back',host);
+  function draw(reset){
+    const c=GR[i];
+    if(reset){ inner.style.transition='none'; on=false; if(synth) synth.cancel(); }
+    fr.innerHTML=`<div class="tag"><span class="chip">Card ${i+1} of ${GR.length}</span><span class="chip plain">${esc(c.t)}</span></div><ol>${c.lines.map(l=>`<li>${blanks(l[0])}<span class="h">(${esc(l[1])})</span></li>`).join('')}</ol><p class="tap">Tap the card to flip</p>`;
+    bk.innerHTML=`<div class="tag"><span class="chip ok">Answers</span><span class="chip plain">${esc(c.t)}</span><button type="button" class="mini" data-list aria-pressed="false">${ISPK}${ISTOP}<span class="lbl">Listen</span></button></div><ol>${c.lines.map(l=>`<li>${filled(l[0])}</li>`).join('')}</ol><p class="note2">${esc(c.note)}</p><p class="tap">Tap the card to flip back</p>`;
+    $('[data-list]',bk).onclick=e=>{ e.stopPropagation(); sayList(c.lines.map(l=>plain(l[0])),e.currentTarget); };
+    inner.classList.toggle('on',on); fr.setAttribute('aria-hidden',on?'true':'false'); bk.setAttribute('aria-hidden',on?'false':'true');
+    $('.cnt',host).textContent=`Card ${i+1} of ${GR.length}`; $$('.dots i',host).forEach((d,k)=>d.classList.toggle('on',k===i));
+    if(reset){ void inner.offsetWidth; inner.style.transition=''; }
+  }
+  const flip=()=>{ on=!on; draw(false); };
+  $('.flip',host).addEventListener('click',flip);
+  $('.flip',host).addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flip(); } });
+  $('.fl',host).onclick=flip; $('.next',host).onclick=()=>{ i=(i+1)%GR.length; draw(true); }; $('.prev',host).onclick=()=>{ i=(i-1+GR.length)%GR.length; draw(true); };
+  draw(true);
+})();
+
+/* ---------- word cards ---------- */
+const SETS=[
+ {t:'Shop and money',w:[['bread','хліб','Bread and milk, please.'],['milk','молоко','The milk is in the fridge.'],['water','вода','Water, please.'],['bag','сумка, пакет','My bag is black.'],['price','ціна','What is the price?'],['cheap','дешевий','The ticket is cheap.'],['expensive','дорогий','The phone is expensive.'],['cash','готівка','Cash or card?'],['card','картка','Card, please.'],['receipt','чек','Receipt, please.']]},
+ {t:'Kitchen and work',w:[['kitchen','кухня','I am in the kitchen.'],['knife','ніж','The knife is new.'],['pan','сковорідка, каструля','The pan is hot.'],['plate','тарілка','The plate is big.'],['cup','чашка','The cup is dirty.'],['fridge','холодильник','The fridge is cold.'],['hot','гарячий','The water is hot.'],['cold','холодний','It is cold today.'],['clean','чистий','The plate is clean.'],['dirty','брудний','The cup is dirty.'],['fresh','свіжий','The bread is fresh.'],['boss','начальник, бос','My boss is from Canada.'],['colleague','колега','My colleague is tired.'],['shift','зміна (на роботі)','My shift is in the morning.']]},
+ {t:'Getting around',w:[['bus','автобус','The bus is late.'],['ticket','квиток','The ticket is cheap.'],['street','вулиця','My street is small.'],['key','ключ','Where is my key?']]},
+ {t:'Useful phrases',w:[['Excuse me','Перепрошую (щоб звернути увагу)','Excuse me, where is the bus?'],['Sorry','Вибач, вибачте','Sorry, I am late.'],['Please','Будь ласка (у проханні)','Water, please.'],['Thank you','Дякую','Thank you, boss.'],['Can you help me?','Ви можете мені допомогти?','Excuse me, can you help me?'],['I do not understand.','Я не розумію.','Sorry, I do not understand.'],['Again, please.','Ще раз, будь ласка.','Again, please. Slowly.'],['How much is it?','Скільки це коштує?','Excuse me, how much is it?'],['Where is the toilet?','Де туалет?','Excuse me, where is the toilet?']]},
+ {t:'Time',w:[['today','сьогодні','I am tired today.'],['tomorrow','завтра','My shift is tomorrow.'],['now','зараз','I am at work now.'],['morning','ранок','Good morning!'],['evening','вечір','I am at home in the evening.'],['late','пізно, запізнився','I am late.']]}
+];
+(function(){
+  let known=new Set(), rev=false;
+  try{ known=new Set(JSON.parse(localStorage.getItem('hw2-known')||'[]')); }catch(e){}
+  const total=SETS.reduce((a,x)=>a+x.w.length,0);
+  const save=()=>{ try{ localStorage.setItem('hw2-known',JSON.stringify([...known])); }catch(e){} $('#kc').textContent=[...known].filter(w=>SETS.some(x=>x.w.some(y=>y[0]===w))).length; };
+  const spk=(t,label)=>`<button type="button" class="spk" data-s="${esc(t)}" aria-label="${label}">${ISPK}</button>`;
+  function draw(){
+    $('#wgrids').innerHTML=SETS.map(set=>`<div class="wset"><h2>${set.t}</h2><span>${set.w.length} cards</span></div><div class="wgrid">${set.w.map(([w,uk,ex])=>{
+      const front=rev?`<span class="big">${esc(uk)}</span>`:`<span class="big">${esc(w)}</span>${spk(w,'Listen to the word')}`;
+      const back=rev?`<span class="big">${esc(w)}</span>${spk(w,'Listen to the word')}`:`<span class="big">${esc(uk)}</span>`;
+      return `<div class="wc ${known.has(w)?'known':''}" role="button" tabindex="0" data-w="${esc(w)}" aria-label="${esc(w)}. Press to flip."><div class="wc-in"><div class="wf front">${front}</div><div class="wf back" aria-hidden="true">${back}<span class="ex">${apo(esc(ex))}</span><span class="wrow">${spk(ex,'Listen to the example')}<button type="button" class="kn" data-k="${esc(w)}">I know it</button></span></div></div></div>`;}).join('')}</div>`).join('');
+    save();
+  }
+  $('#wgrids').addEventListener('click',e=>{
+    const sp=e.target.closest('.spk'); if(sp){ e.stopPropagation(); sayOnce(sp.dataset.s); return; }
+    const kn=e.target.closest('.kn'); if(kn){ e.stopPropagation(); const w=kn.dataset.k, card=kn.closest('.wc'); if(known.has(w)) known.delete(w); else known.add(w); card.classList.toggle('known',known.has(w)); save(); return; }
+    const c=e.target.closest('.wc'); if(c) c.classList.toggle('on');
+  });
+  $('#wgrids').addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('wc')){ e.preventDefault(); e.target.classList.toggle('on'); } });
+  $('#rev').onclick=e=>{ rev=!rev; e.currentTarget.setAttribute('aria-pressed',rev); e.currentTarget.textContent=rev?'English first':'Ukrainian first'; draw(); };
+  $('#hk').onclick=e=>{ const on=e.currentTarget.getAttribute('aria-pressed')!=='true'; e.currentTarget.setAttribute('aria-pressed',on); $('#wgrids').classList.toggle('hide-known',on); };
+  $('#voice').addEventListener('change',e=>{ chosen=e.target.value; try{ localStorage.setItem('hw2-voice',chosen); }catch(err){} pickVoice(); sayOnce('expensive'); });
+  draw();
+  window.__wordTotal=total;
+})();
+const h0=(location.hash||'').slice(1); showTab(TABS.includes(h0)?h0:'homework');
+</script>

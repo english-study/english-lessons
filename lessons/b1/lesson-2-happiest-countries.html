@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why are the happiest countries so happy? | Future forms and vague language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Same look as lesson 2. Colour: yellow = present simple, blue = present continuous, mint = new expressions. */
+:root{
+  color-scheme:light;
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#17202e; --muted:#566175; --line:#d9dfe9;
+  --accent:#2a47d6; --accent-ink:#ffffff; --accent-soft:#e4e9fb;
+  --hl:#ffe45c; --hl-ink:#17202e; --vocab:#b4ead9; --vocab-ink:#0d3a2e; --now:#dbe4ff; --will:#ffd3b8;
+  --ok:#1b6e45; --ok-soft:#dcf2e6; --bad:#a5281f; --bad-soft:#fde5e1; --warm:#fff3d6;
+  --font-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-text:"Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1520; --surface:#172030; --ink:#e9eef7; --muted:#9aa7bd; --line:#2a3550;
+    --accent:#8ea4ff; --accent-ink:#0c1226; --accent-soft:#222e52;
+    --hl:#5d4c00; --hl-ink:#ffe98a; --vocab:#1c5a4c; --vocab-ink:#c3f6e7; --now:#23325c; --will:#6b3a1a;
+    --ok:#7fdcab; --ok-soft:#173a2b; --bad:#ff9d93; --bad-soft:#3d1f1c; --warm:#3a3016;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:18px;line-height:1.5}
+.wrap{max-width:940px;margin:0 auto;padding:20px 16px 72px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:0;list-style:none}
+.steps button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px 6px 8px;font-size:.9rem}
+.steps .n{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:.8rem;font-weight:700}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps button[aria-current="step"] .n{background:rgba(255,255,255,.22);color:inherit}
+select{font:inherit;font-size:.88rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 8px;max-width:100%}
+.warn{margin:8px 0;padding:10px 14px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:.95rem}
+.eyebrow{margin:18px 0 6px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.12;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+h2{margin:32px 0 8px;font-size:1.3rem;font-weight:700}
+h3{margin:0 0 6px;font-size:1.15rem}
+.lead{margin:12px 0 0;color:var(--muted);max-width:62ch}
+.hint{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+.small{font-size:.85rem;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 18px;font-weight:500;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.mini{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:.9rem}
+.mini[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini svg,.play svg{width:20px;height:20px;flex:none}
+.i-stop{display:none}
+[aria-pressed="true"]>.i-stop{display:block}
+[aria-pressed="true"]>.i-spk{display:none}
+.chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.85rem;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+mark.g,mark.w,mark.c{background:transparent;color:inherit;padding:0}
+.hl-g mark.g{background:var(--hl);color:var(--hl-ink);padding:1px 4px;border-radius:4px}
+.hl-w mark.w{background:var(--vocab);color:var(--vocab-ink);padding:1px 4px;border-radius:4px}
+.hl-c mark.c{background:var(--now);color:var(--ink);padding:1px 4px;border-radius:4px;box-shadow:inset 0 -2px 0 var(--accent)}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:14px 0 6px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.legend label{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:.95rem}
+.legend input{width:20px;height:20px;accent-color:var(--accent)}
+.sw{display:inline-block;padding:1px 10px;border-radius:4px;font-weight:500}
+.sw.g{background:var(--hl);color:var(--hl-ink)}
+.sw.w{background:var(--vocab);color:var(--vocab-ink)}
+.sw.c{background:var(--now);box-shadow:inset 0 -2px 0 var(--accent)}
+/* big question */
+.big-q{font-family:var(--font-text);font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.35;margin:0 0 14px;text-wrap:balance}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.qlist li{padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-family:var(--font-text);font-size:1.3rem;line-height:1.4}
+.qlist .tag{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin-left:8px}
+.deckbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.qcard{min-height:240px;display:flex;flex-direction:column;justify-content:center}
+.qtext{font-family:var(--font-text);font-size:clamp(1.6rem,4vw,2.5rem);line-height:1.3;margin:0 0 18px;text-wrap:balance}
+.controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+/* profiles */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.pic{width:100%;aspect-ratio:1/1;max-height:320px;border-radius:14px;background-size:cover;background-position:center;margin-bottom:12px}
+.profile h3{font-size:1.5rem;margin:0}
+.profile .job{margin:0 0 8px;color:var(--muted)}
+.profile ul{margin:0;padding-left:20px;display:grid;gap:6px;font-family:var(--font-text);font-size:1.15rem;line-height:1.45}
+.score{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.score input[type=range]{flex:1 1 260px;accent-color:var(--accent);height:28px}
+.score output{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.4rem}
+/* matching */
+.match{display:grid;grid-template-columns:1fr 1.5fr;gap:14px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mbtn{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;font-size:1.05rem;line-height:1.35}
+.mw{font-weight:700;font-size:1.15rem}
+.mbtn.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.mbtn.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.mbtn.bad{background:var(--bad-soft);border-color:var(--bad)}
+.mbtn.hint{outline:3px dashed var(--accent);outline-offset:2px}
+.mstat{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+/* dialogue */
+.dbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 16px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.dbar label{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:.95rem}
+.dbar input{width:20px;height:20px;accent-color:var(--accent)}
+.play{display:inline-flex;align-items:center;gap:10px;border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:10px 20px 10px 16px;font-weight:700}
+.dl{display:flex;gap:12px;align-items:flex-start;margin:0 0 10px;cursor:pointer}
+.dl.D{flex-direction:row-reverse}
+.av{flex:none;width:46px;height:46px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--line)}
+.bub{padding:10px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-family:var(--font-text);font-size:1.15rem;line-height:1.6;max-width:min(720px,86%);transition:background-color .15s}
+.dl.D .bub{background:var(--accent-soft)}
+.dl.now .bub{outline:3px solid var(--accent);outline-offset:1px}
+.dl .who{display:block;font-family:var(--font-ui);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.hide-text .bub{background:var(--line)!important;color:transparent;user-select:none}
+.hide-text .bub *{color:transparent!important;background:transparent!important;box-shadow:none!important}
+.vset{flex-basis:100%;border-top:1px dashed var(--line);padding-top:10px;font-size:.92rem}
+.vset summary{cursor:pointer;color:var(--muted)}
+.vrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.vrow select{min-width:220px}
+.stage{margin:8px 0 14px;text-align:center;color:var(--muted);font-style:italic;font-size:.95rem}
+/* Q and A */
+.qa{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.qa li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.qa .q{font-family:var(--font-text);font-size:1.25rem;margin:0}
+.qa .a{margin:10px 0 0;padding-top:10px;border-top:1px dashed var(--line);color:var(--ok);font-weight:500}
+/* grammar */
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.gcard .use{margin:4px 0 12px;color:var(--muted)}
+table.conj{width:100%;border-collapse:collapse}
+table.conj th,table.conj td{padding:12px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+table.conj tr:last-child td{border-bottom:0}
+table.conj th{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+table.conj td:first-child{font-weight:700;white-space:nowrap}
+.ex{font-family:var(--font-text);font-size:1.2rem;line-height:1.5}
+.ex div{margin:2px 0}
+.pat{color:var(--muted)}
+.note{margin:12px 0 0;padding:12px 16px;border-radius:12px;background:var(--accent-soft)}
+.contrast{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.contrast .box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.contrast .cap{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.contrast .big{font-family:var(--font-text);font-size:1.6rem;margin:6px 0}
+/* gap lists and fix list */
+.gl-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.gl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.gl-main{display:flex;gap:14px;align-items:baseline}
+.num{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted);transform:translateY(-2px)}
+.gl-text{margin:0;font-family:var(--font-text);font-size:clamp(1.2rem,2.5vw,1.5rem);line-height:2;flex:1}
+.gl-text .h{font-family:var(--font-ui);font-size:.85rem;color:var(--muted);margin-left:6px;white-space:nowrap}
+input.gap{font:inherit;font-family:var(--font-text);color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:0 8px;margin:0 4px;text-align:center;min-width:3em;max-width:100%}
+input.wide{font:inherit;font-family:var(--font-text);font-size:1.25rem;color:var(--ink);background:var(--bg);border:0;border-bottom:2px solid var(--accent);border-radius:6px 6px 0 0;padding:6px 10px;width:100%;margin-top:8px}
+input.gap.ok,input.wide.ok{border-bottom-color:var(--ok);background:var(--ok-soft)}
+input.gap.bad,input.wide.bad{border-bottom-color:var(--bad);background:var(--bad-soft)}
+.gl-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 0 42px}
+.answer{margin:14px 0 0 42px;padding-top:14px;border-top:1px dashed var(--line)}
+.answer p{margin:6px 0}
+.fix{font-family:var(--font-text);font-size:1.15rem}
+.why{color:var(--muted);font-size:.98rem}
+.res{font-size:.92rem;font-weight:500}
+.bad-s{font-family:var(--font-text);font-size:1.4rem;margin:0;text-decoration:underline wavy var(--bad);text-underline-offset:5px}
+/* speaking */
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.cat h3{font-size:.95rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cat button{display:block;width:100%;text-align:left;border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:1rem}
+.cat button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.prompts div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.prompts b{display:block;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.timer{font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:700}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.checks label{display:flex;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:1.1rem;cursor:pointer}
+.checks input{width:22px;height:22px;accent-color:var(--accent)}
+/* teacher notes */
+.tnote{margin:0 0 18px;padding:14px 18px;border-radius:14px;background:var(--warm);border:1px dashed var(--muted);font-size:.95rem}
+.tnote b.t{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.tnote ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.tnote textarea{width:100%;margin-top:8px;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);color:var(--ink);min-height:70px}
+.tbadge{position:fixed;right:12px;bottom:12px;background:var(--warm);border:1px solid var(--muted);border-radius:999px;padding:4px 12px;font-size:.8rem}
+@media (max-width:600px){
+  body{font-size:17px}
+  .card{padding:16px}
+  .match{grid-template-columns:1fr}
+  .gl-meta,.answer{margin-left:0}
+  .bub{max-width:100%}
+}
+@media (prefers-reduced-motion: reduce){ .bub{transition:none} }
+
+mark.f{background:transparent;color:inherit;padding:0}
+.hl-f mark.f{background:var(--will);color:var(--ink);padding:1px 4px;border-radius:4px;box-shadow:inset 0 -2px 0 #d9722b}
+.sw.f{background:var(--will);box-shadow:inset 0 -2px 0 #d9722b}
+.ccard{min-height:300px}
+.who2{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:1.05rem}
+.idea{font-family:var(--font-text);font-size:clamp(1.25rem,2.8vw,1.6rem);line-height:1.55;margin:0 0 12px}
+.retell{font-family:var(--font-text);font-size:clamp(1.2rem,2.6vw,1.5rem);line-height:1.8;margin:0 0 10px;padding:12px 16px;border-radius:12px;background:var(--warm)}
+.qsmall li{font-size:1.1rem;padding:10px 14px}
+.srcs{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.95rem}
+.srcs a{color:var(--accent)}
+.dlg .dl{cursor:pointer}
+
+.flip{width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:16px 20px;font-family:var(--font-text);font-size:1.25rem;line-height:1.5;min-height:92px}
+.flip[aria-pressed="true"]{background:var(--vocab);color:var(--vocab-ink);border-color:var(--vocab)}
+.flip .tag2{display:block;font-family:var(--font-ui);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.flip b{font-size:1.5rem;display:block}
+.flip .ex2{display:block;margin-top:6px;font-style:italic}
+#oldWords{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+</style>
+</head>
+<body>
+<div class="wrap hl-g hl-w" id="app">
+  <ol class="steps" id="steps" aria-label="Lesson screens"></ol>
+  <p class="warn" id="novoice" role="alert" hidden>This browser cannot speak. Open the page in Chrome or Edge.</p>
+
+  <main>
+    <!-- 1 -->
+    <section class="screen" id="s-home" hidden>
+      <p class="eyebrow">Warm-up</p>
+      <h1>Homework and last lesson</h1>
+      <p class="lead">First, tell me about your homework. Then we check the words from The Perfect Match.</p>
+      <div class="card" style="margin-top:22px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0 0 10px">Tell me about your homework.</p>
+        <ul class="qlist" style="margin-top:10px">
+          <li>What did you do? What was easy, and what was difficult?</li>
+          <li>Which new word did you use in real life this week?</li>
+        </ul>
+      </div>
+      <h2>Do you remember these?</h2>
+      <p class="hint">Read the clue and say the word or phrase. Make your own sentence with it. Then tap the card to turn it.</p>
+      <ol id="oldWords"></ol>
+    </section>
+    <!-- 2 -->
+    <section class="screen" id="s-guess" hidden>
+      <p class="eyebrow">Topic</p>
+      <h1>Why are the happiest countries so happy?</h1>
+      <p class="lead">First about you. Then we guess, and then we look at the real list from the World Happiness Report 2026.</p>
+      <div class="card" style="margin-top:22px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0">Do you consider yourself a happy person or a lucky person? Or maybe neither? Why?</p>
+      </div>
+      <div class="card" style="background:var(--accent-soft)">
+        <p class="big-q" style="margin:0">Which 10 countries do you think are the happiest in the world? What do they have in common?</p>
+      </div>
+      <h2>The real top 10</h2>
+      <p class="hint">Based on how people rate their own lives from 0 to 10, in about 147 countries (Gallup World Poll). Reveal them from number 10 to number 1.</p>
+      <div class="card" style="padding:8px 14px"><div style="overflow-x:auto"><table class="conj" id="top10"><thead><tr><th>#</th><th>Country</th><th>Score</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="controls" style="justify-content:flex-start;margin-top:0"><button type="button" class="btn primary" id="revNext">Reveal the next one</button><button type="button" class="btn" id="revAll">Show all</button><button type="button" class="btn" id="revReset">Hide again</button></div>
+      <h2>Now think</h2>
+      <ol class="qa" id="guessQA"></ol>
+      <p class="small" style="margin-top:14px">Source: World Happiness Report 2026 (Oxford Wellbeing Research Centre, Gallup, UN SDSN). Full list of sources on the last screen.</p>
+    </section>
+    <!-- 3 -->
+    <section class="screen" id="s-words" hidden>
+      <p class="eyebrow">New words</p>
+      <h1>Match the words</h1>
+      <p class="lead">You will meet these words in the next stages. Tap a word, then tap its meaning. Don't know one? Guess from the other meanings, or ask me.</p>
+      <div style="margin-top:22px" id="matcher"></div>
+      <div class="card" style="margin-top:20px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0;font-size:1.4rem">Which three words could you use to talk about your own job?</p>
+      </div>
+    </section>
+    <!-- 4 -->
+    <section class="screen" id="s-cards" hidden>
+      <p class="eyebrow">Agree or disagree?</p>
+      <h1>Voices from the happiest countries</h1>
+      <p class="lead">Open the cards one by one. Read or listen, then say if you agree or not, and why.</p>
+      <div class="legend">
+        <label><input type="checkbox" id="showVague" checked> Show vague language</label>
+        <label><input type="checkbox" id="showVocab" checked> Show new words</label>
+        <span><span class="sw g">vague language</span></span><span><span class="sw w">new word</span></span>
+      </div>
+      <p class="small" style="margin:0 0 8px">These are imagined voices, based on what residents and experts in these countries say (BBC, 2026). They are not exact quotes.</p>
+      <p class="small" style="margin:0 0 14px">Vague language: <b>kind of / sort of</b>, <b>like</b>, <b>or something</b>, <b>things like that / stuff like that</b>, <b>-ish</b> (six-ish, bluish), <b>more or less</b>, <b>you know</b>.</p>
+      <div id="cardDeck"></div>
+    </section>
+    <!-- 5 -->
+    <section class="screen" id="s-prac" hidden>
+      <p class="eyebrow">Practice</p>
+      <h1>Words and vague language</h1>
+      <p class="lead">The sentences come from the cards. First I explain, then you do the exercises.</p>
+      <h2>How vague language works</h2>
+      <p class="hint">Tap Show to open each row.</p>
+      <div class="gcard"><div style="overflow-x:auto"><table class="conj"><thead><tr><th>Expression</th><th>What it does</th><th>Example</th></tr></thead><tbody id="vagueRows"></tbody></table></div>
+        <p style="margin:12px 0 0"><button type="button" class="mini" id="vagueAll">Show all</button></p></div>
+      <h2>A. New words</h2>
+      <p class="hint" id="bankA"></p>
+      <ol class="gl-list" id="exA"></ol>
+      <h2>B. Vague language</h2>
+      <p class="hint">Word bank: kind of, sort of, like, or something like that, things like that, more or less, you know, ish.</p>
+      <ol class="gl-list" id="exB"></ol>
+    </section>
+    <!-- 6 -->
+    <section class="screen" id="s-text" hidden>
+      <p class="eyebrow">Reading and listening</p>
+      <h1>Are we going to be happy by 2030?</h1>
+      <p class="lead">Listen first, with the text hidden. Then read it. Facts come from real reports. The guesses about the future are marked.</p>
+      <div class="dbar">
+        <button type="button" class="play" id="playText" data-audio data-go="Play the text" data-stop="Stop" aria-pressed="false"><span class="lbl">Play the text</span></button>
+        <label><input type="checkbox" id="showTextBox"> Show the text</label>
+        <div id="voicePanel" style="flex-basis:100%"></div>
+      </div>
+      <div class="legend">
+        <label><input type="checkbox" id="showForms"> Show the future forms in colour</label>
+        <span><span class="sw c">going to / present continuous</span></span><span><span class="sw f">will / won't</span></span>
+      </div>
+      <div class="dlg hide-text" id="theText"></div>
+      <h2>Check</h2>
+      <ol class="qa" id="textQA"></ol>
+    </section>
+    <!-- 7 -->
+    <section class="screen" id="s-gram" hidden>
+      <p class="eyebrow">Grammar</p>
+      <h1>Talking about the future</h1>
+      <p class="lead">Three forms, three jobs. I explain, then you try.</p>
+      <h2>Which form for which job?</h2>
+      <div class="contrast" id="jobs"></div>
+      <h2>The forms</h2>
+      <p class="hint">First say the pattern yourself. Then tap Show.</p>
+      <div id="gcards"></div>
+      <h2>The big contrast</h2>
+      <div class="contrast">
+        <div class="box"><span class="cap">going to: I can see it</span><p class="big">Look at those numbers. More people <b>are going to</b> learn new skills.</p><p style="margin:0">Evidence now, or a plan I already made.</p></div>
+        <div class="box"><span class="cap">will: I think so</span><p class="big">I think more companies <b>will</b> try a four-day week.</p><p style="margin:0">My opinion or my guess. Often with: I think, probably, I'm sure, maybe, I don't think.</p></div>
+      </div>
+      <h2>Find them in the text</h2>
+      <ol class="qa" id="gramQA"></ol>
+      <h2>C. Choose the form</h2>
+      <p class="hint">Write the verb in brackets in the correct future form. Contractions are fine.</p>
+      <ol class="gl-list" id="exC"></ol>
+      <h2>D. Correct the mistakes</h2>
+      <p class="hint">There is one mistake in each sentence. Write the correct sentence.</p>
+      <ol class="gl-list" id="exD"></ol>
+    </section>
+    <!-- 8 -->
+    <section class="screen" id="s-final" hidden>
+      <p class="eyebrow">Speaking</p>
+      <h1>Predict the future</h1>
+      <p class="lead">Use will, going to and the present continuous. Add some vague language too. Tell me stories, not single sentences.</p>
+      <h2>Part A. Your own future</h2>
+      <p class="hint">Choose a topic and a beginning. Tap to mark it.</p>
+      <div class="cats" id="catsA"></div>
+      <h2>Part B. The world around you</h2>
+      <p class="hint">Choose one topic. What do you think will happen by 2030, and how are you going to be part of it?</p>
+      <div class="cats" id="catsB"></div>
+      <h2>Part C. Prediction game</h2>
+      <div class="contrast">
+        <div class="box"><span class="cap">Round 1</span><p class="big" style="font-size:1.3rem">I predict your life.</p><p style="margin:0">I say what you are going to do (this weekend, next month, next year). You answer: "Yes, I am" or "No, I'm not. I'm actually going to ..."</p></div>
+        <div class="box"><span class="cap">Round 2</span><p class="big" style="font-size:1.3rem">You predict the world.</p><p style="margin:0">Tap the button. Say what will or won't happen by 2030, and why. I ask: "Really? Why do you think so?"</p></div>
+      </div>
+      <div class="card" style="margin-top:16px;text-align:center">
+        <p class="small" style="margin:0 0 6px">Your topic for Round 2</p>
+        <p class="big-q" id="gameTopic" style="margin:0 0 12px">Press the button</p>
+        <button type="button" class="btn primary" id="gameBtn">Next topic</button>
+      </div>
+      <h2>What can you do now?</h2>
+      <ul class="checks" id="checks"></ul>
+      <div class="card" style="margin-top:22px;background:var(--accent-soft)">
+        <p class="big-q" style="margin:0">Tell me your plans, your guesses, and your own ideas. Well done!</p>
+      </div>
+      <h2>Sources</h2>
+      <ul class="srcs" id="srcs"></ul>
+      <p class="small">Numbers are from these reports and news pieces, checked in November 2026. The four-day-week figures about burnout are what employees said about themselves, not a medical measure.</p>
+    </section>
+  </main>
+
+  <nav class="controls" style="margin-top:34px;justify-content:space-between" aria-label="Next and previous screen">
+    <button type="button" class="btn" id="prevScreen">← Back</button>
+    <button type="button" class="btn primary" id="nextScreen">Next →</button>
+  </nav>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const apo=s=>s.replace(/'/g,'’');
+const strip=s=>s.replace(/\[\[|\]\]|\{\{|\}\}|~~|\^\^|\*\*/g,'');
+const mk=s=>apo(s).replace(/\[\[(.+?)\]\]/g,'<mark class="g">$1</mark>').replace(/~~(.+?)~~/g,'<mark class="c">$1</mark>').replace(/\^\^(.+?)\^\^/g,'<mark class="f">$1</mark>').replace(/\{\{(.+?)\}\}/g,'<mark class="w">$1</mark>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+const answersOf=s=>[...s.matchAll(/\[\[(.+?)\]\]/g)].map(m=>m[1]);
+const norm=s=>String(s||'').toLowerCase().replace(/[’`]/g,"'").replace(/[.!?,]+$/,'').replace(/^-/,'').replace(/\bwon't\b/g,'will not').replace(/n't\b/g,' not').replace(/'m\b/g,' am').replace(/'re\b/g,' are').replace(/'ll\b/g,' will').replace(/'s\b/g,' is').replace(/\s+/g,' ').trim();
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const ICON_SPK='<svg class="i-spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_STOP='<svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+/* ---------- content ---------- */
+/* [[x]] vague language or a gap, {{x}} new word, ~~x~~ going to / present continuous, ^^x^^ will */
+const OLD=[
+ ["You are hungry and you have only ten minutes between two meetings. What do you do?","to grab a bite","Let's grab a bite after the meeting."],
+ ["You like it a lot and you spend your free time on it, for example photography or running. How do you say that?","to be into something","I'm into photography."],
+ ["You don't cook at home tonight. You have dinner in a restaurant. What is this activity?","to eat out","We usually eat out on Fridays."],
+ ["A person refuses most foods and likes only a few kinds. What do we call this person?","a picky eater","My brother is a picky eater."],
+ ["Your manager needs the work by Friday, and you finish it on time. What did you do?","to meet a deadline","We worked all night to meet the deadline."],
+ ["The app crashes and you don't know why. After an hour you find the answer. What did you do?","to figure something out","I finally figured out the problem."],
+ ["You are the person who is responsible for the project, and everyone asks you about it. What is your role?","to be in charge of something","She's in charge of the new app."],
+ ["You are so excited that you talk or do too much, for example about food for an hour. What happens to you?","to get carried away","Sorry, I got carried away."]
+];
+const TOP10=[["Finland","7.764"],["Iceland","7.540"],["Denmark","7.539"],["Costa Rica","7.439"],["Sweden","7.255"],["Norway","7.242"],["Netherlands","7.223"],["Israel","7.187"],["Luxembourg","7.063"],["Switzerland","7.018"]];
+const GUESS_QA=[
+ ["What do you notice about the list?","Eight of the ten are European. Five are Nordic countries. Costa Rica (4th) is the first Latin American country this high, and Israel is the only one from the Middle East."],
+ ["Where are the English-speaking countries?","None are in the top 10. New Zealand is 11th, Ireland 13th, Australia 15th, the United States 23rd, Canada 25th and the United Kingdom 29th."],
+ ["Money, or something else? Why are these countries happy?","The report looks at social support, healthy life expectancy, freedom to make life choices, generosity, trust and low corruption, as well as income. Finland is first for the ninth year in a row."],
+ ["Where do you think Ukraine is in the list of 147 countries?","111th, the same place as last year. Countries in war usually have the lowest scores."]
+];
+const PAIRS=[
+ ["workload","the amount of work you have to do"],
+ ["a safety net","help from the state or family that protects you if things go wrong"],
+ ["a trade-off","something you accept losing so that you can get something else"],
+ ["to pursue something","to keep trying to achieve a goal or to keep doing an interest"],
+ ["resilience","the ability to get strong again after a difficult time"],
+ ["to take something for granted","to expect it will always be there and not to value it"],
+ ["perks","extra benefits you get from a job, besides your salary"],
+ ["fulfilling","giving you a feeling of purpose and satisfaction"],
+ ["affordable","not too expensive: you can pay for it without problems"]
+];
+const W_ORDER=[4,0,7,2,8,5,1,3,6], E_ORDER=[6,3,0,8,1,5,7,2,4];
+
+const CARDS=[
+ {country:"Finland",mode:"read",
+  text:"I pay really high taxes, and honestly, I'm fine with that. It's [[kind of]] a {{safety net}}: health care, school, transport, [[things like that]]. It's a {{trade-off}}, but I feel safe. My kids walk to school from the age of seven.",
+  qs:["Do you agree? Would you pay high taxes for this?","What are you doing this month to feel less overpacked?"]},
+ {country:"Denmark",mode:"listen",
+  text:"People think we're happy because we smile all the time. We don't, [[you know]]. It's [[more or less]] about trust. There isn't much hustle culture here, so I don't feel guilty when I stop work at five-[[ish]]. We {{take}} that trust {{for granted}}, I guess.",
+  qs:["Do you agree that happiness is about trust, not smiling?","What are you going to do this week to slow down a bit?"]},
+ {country:"Denmark (another voice)",mode:"read",
+  text:"My kids go to the same school as children from rich and poor families, for ten years. It's [[like]] everyone starts from the same place. I think kids can {{pursue}} their own interests more easily, [[or something like that]].",
+  qs:["Would you like a school like that? Why or why not?","Will schools like this exist in your country in the future?"]},
+ {country:"Sweden",mode:"listen",
+  text:"Everyone says \"du\" to everyone, even the boss. It sounds small, but I think it changes how we work together. And we stop for fika, a coffee and a chat, [[stuff like that]], because life is [[sort of]] too short for non-stop work. It makes my job more {{fulfilling}}.",
+  qs:["Do you agree? Can a coffee break make work more fulfilling?","What is your version of fika?"]},
+ {country:"Iceland",mode:"read",
+  text:"My happiness is small and {{affordable}}: a coffee, a warm pool, friends, [[things like that]]. I go outside in any weather, even when it's [[like]] really terrible. Honestly, I think people complain too much about the weather.",
+  qs:["Do you agree? What small, cheap thing makes you happy?","Where are you going to go next weekend?"]},
+ {country:"Iceland (another voice)",mode:"listen",
+  text:"For centuries we lived far from everyone, so we had to help each other. It isn't really a choice, it's [[more or less]] a habit. That's our {{resilience}}, I think. I'm not sure it works everywhere, [[you know]].",
+  qs:["Do you think helping each other can be a habit? Where does your own resilience come from?","Will people help each other more or less in the future?"]},
+ {country:"Costa Rica",mode:"read",
+  text:"The best {{perks}} in my life don't come from a company. They're beaches, neighbours who do sports with me, time outside, [[or something like that]]. Honestly, I'd take that over a bigger salary, [[kind of]] any day.",
+  qs:["Do you agree? Would you choose this over a bigger salary?","Which perks are you going to want in ten years?"]},
+ {country:"United Kingdom",mode:"listen",
+  text:"At first I thought a four-day week with the same pay was a crazy idea. Now I do the same {{workload}} in four days, and I'm much less tired. It's [[kind of]] a win-win, [[more or less]]. I don't think I'd go back, to be honest.",
+  qs:["Would you choose a four-day week with the same pay? What is the trade-off?","Do you think your company will try it in the next five years?"]}
+];
+
+const VAGUE=[
+ ["kind of / sort of","Makes a statement softer and less exact.","It's [[kind of]] a safety net. (Finland)"],
+ ["like","Introduces an example or an approximate idea. Also a filler.","It's [[like]] everyone starts from the same place. (Denmark)"],
+ ["or something (like that)","Says: this is not exact, there are other possibilities.","Beaches, neighbours, time outside, [[or something like that]]. (Costa Rica)"],
+ ["things / stuff like that","Closes a list when you don't want to name everything.","Health care, school, transport, [[things like that]]. (Finland)"],
+ ["-ish","Adds 'about' to a time, number or colour.","I stop work at five-[[ish]]. (Denmark)"],
+ ["more or less","Almost exactly, but not completely.","It's [[more or less]] about trust. (Denmark)"],
+ ["you know","Checks that the listener follows. Fills a pause.","We don't, [[you know]]. (Denmark)"]
+];
+
+const EX_A=[
+ {s:"It's kind of a [[safety net]]: health care, school, transport."},
+ {s:"It's a [[trade-off]], but I feel safe."},
+ {s:"We [[take]] that trust [[for granted]], I guess."},
+ {s:"I think kids can [[pursue]] their own interests more easily."},
+ {s:"My happiness is small and [[affordable]]: a coffee, a warm pool, friends."},
+ {s:"That's our [[resilience]], I think."},
+ {s:"The best [[perks]] in my life don't come from a company."},
+ {s:"A coffee break makes my job more [[fulfilling]]."},
+ {s:"I do the same [[workload]] in four days, and I'm much less tired."}
+];
+const BANK_A="Word bank: workload, safety net, trade-off, pursue, resilience, take (something) for granted, perks, fulfilling, affordable";
+const EX_B=[
+ {s:"It's [[kind of]] a safety net."},
+ {s:"I stop work at five-[[ish]]."},
+ {s:"Health care, school, transport, [[things like that]]."},
+ {s:"Beaches, neighbours, time outside, [[or something like that]]."},
+ {s:"It's [[like]] everyone starts from the same place."},
+ {s:"It's [[more or less]] about trust."},
+ {s:"We don't smile all the time, [[you know]]."}
+];
+
+/* the text for reading and listening. ^^ will ^^, ~~ going to ~~ */
+const TEXT=[
+ "Nobody knows the future, but some numbers are already clear. Let's look at what research says about 2030.",
+ "The World Economic Forum asked more than 1,000 big employers about the next five years. They expect about 170 million new jobs and 92 million lost jobs by 2030. So the world ^^will^^ have about 78 million more jobs than today. They also expect 39% of key work skills to change. Look at those numbers: a lot of us ~~are going to~~ learn something new, and probably more than once.",
+ "Working hours are changing too. In 2022, 61 UK companies tried a four-day week with the same pay, and 56 of them kept it. About 71% of employees said they felt less burnout, and fewer people left their jobs. The organisers of a smaller pilot, with 17 British companies, say all of them kept the shorter week. Hustle culture, the idea that you must work non-stop to succeed, is not the only model. I think more companies ^^will^^ try a shorter week, but I don't think it ^^will^^ happen everywhere.",
+ "And happiness? In 2026 Finland was first for the ninth year in a row. Costa Rica climbed from 23rd place in 2023 to 4th. The 2026 report was about social media, and it points to heavy use as a worry for the wellbeing of young people. Nobody can say what the ranking ^^will^^ look like in 2030. But the same ingredients keep appearing: trust, social support and the freedom to make your own life choices. I'm sure the happiest countries ^^won't^^ change completely, but maybe some new countries ^^will^^ join them."
+];
+const TEXT_QA=[
+ ["How many new jobs do employers expect by 2030? How many will disappear?","About 170 million new jobs and 92 million lost jobs. The net result is about 78 million more jobs."],
+ ["What happened in the UK four-day week pilot?","61 companies tried it with the same pay. 56 kept it. About 71% of employees said they felt less burnout, and fewer people left."],
+ ["Which sentences are facts, and which are guesses?","Facts use the past or the present (tried, asked, expect). Guesses about the future use will, going to, I think, probably, maybe."],
+ ["Which sentences have going to? Why not will?","\"A lot of us are going to learn something new\" comes after the numbers: we can see the evidence. \"I think more companies will try...\" is my opinion, so I use will with I think."]
+];
+
+const JOBS=[
+ {t:"Present continuous",big:"I'm meeting my team at 3 tomorrow.",d:"A fixed arrangement: a time, a place or a person. It is in the calendar."},
+ {t:"be going to",big:"I'm going to learn more about UX.",d:"A plan I made before speaking. Or a prediction with evidence now: Look at those clouds. It's going to rain."},
+ {t:"will / won't",big:"I think it will be different.",d:"My opinion or guess (I think, probably, I'm sure). Also an offer, a promise or a quick decision: I'll help you."}
+];
+const GRAM=[
+ {title:"Present continuous (arrangement)", use:"Fixed plans with a time, a place or a person.", rows:[
+  ["Affirmative","Subject + **am / is / are** + verb-ing + time",["I **am meeting** my team at 3 tomorrow.","She **is flying** to Warsaw on Friday."]],
+  ["Negative","Subject + **am / is / are** + not + verb-ing",["I **am not working** on Friday.","They **aren't coming** to the conference."]],
+  ["Question","**Am / Is / Are** + subject + verb-ing?",["What **are** you **doing** this weekend?","**Is** he **coming** tomorrow?"]]],
+  note:"If you can say the exact time, place or person, the present continuous is natural."},
+ {title:"be going to (plan or evidence)", use:"A plan you already decided, or a prediction because you can see signs now.", rows:[
+  ["Affirmative","Subject + **am / is / are going to** + base verb",["I **am going to** learn more about UX.","Many people **are going to** learn new skills."]],
+  ["Negative","Subject + **am / is / are not going to** + base verb",["She **isn't going to** accept the offer.","I **'m not going to** answer that."]],
+  ["Question","**Am / Is / Are** + subject + **going to** + base verb?",["**Are** you **going to** apply for that job?","What **are** they **going to** do?"]]],
+  note:"In fast speech going to often sounds like gonna. Use it in speaking, not in formal writing."},
+ {title:"will / won't (opinion, offer, quick decision)", use:"A guess or opinion about the future, or a decision made at the moment of speaking.", rows:[
+  ["Affirmative","Subject + **will** + base verb (same for all persons)",["I think more companies **will** try a shorter week.","I **'ll** help you with that."]],
+  ["Negative","Subject + **won't** + base verb",["I don't think everyone **will** be happy.","It **won't** happen everywhere."]],
+  ["Question","**Will** + subject + base verb?",["**Will** people be happier in 2030?","**Will** you be at the conference?"]]],
+  note:"Typical signals: I think, I don't think, probably, I'm sure, maybe, I guess. After will the verb is always in the base form."}
+];
+const GRAM_QA=[
+ ["\"I'm meeting my team at 3 tomorrow.\" Which form? Why?","Present continuous. It is a fixed arrangement: time and people."],
+ ["\"Look at those numbers: a lot of us are going to learn something new.\" Why going to?","Because there is evidence now: the numbers."],
+ ["\"I think more companies will try a shorter week.\" Why will?","It is an opinion, with I think. We cannot see a sign. It is a guess."],
+ ["Offer: \"This file is heavy.\" What do you say?","I'll help you. It is a quick decision at the moment of speaking, so will."]
+];
+const EX_C=[
+ {s:"Look at the numbers! Many people [[are going to learn]] new skills.",h:"learn"},
+ {s:"I [[am meeting]] my client at 10 tomorrow. It's in my calendar.",h:"meet"},
+ {s:"I think four-day weeks [[will become]] normal in some countries.",h:"become"},
+ {s:"I don't think everyone [[will be]] happy with that.",h:"be"},
+ {s:"A: I can't open this file. B: Give it to me. I [[will help]] you.",h:"help"},
+ {s:"She already has a better offer. She [[is not going to accept]] this one.",h:"not / accept"},
+ {s:"[[Are you going to apply]] for that job? You told me you wanted to.",h:"apply"},
+ {s:"What [[are you doing]] this weekend? Do you have any plans?",h:"do"}
+];
+const EX_D=[
+ {bad:"Tomorrow at 9 I will have a meeting with the client.",fix:"Tomorrow at 9 I'm having a meeting with the client.",why:"This is a fixed arrangement with a time. We use the present continuous.",alt:["Tomorrow at 9 I am having a meeting with the client","Tomorrow at 9 I'm meeting the client","Tomorrow at 9 I am meeting the client","Tomorrow at 9 I'm having a meeting with the client"]},
+ {bad:"Look at those clouds. It will rain.",fix:"Look at those clouds. It's going to rain.",why:"We can see evidence now, so we use going to.",alt:["Look at those clouds. It is going to rain"]},
+ {bad:"I think more people will to work four days.",fix:"I think more people will work four days.",why:"After will the verb is in the base form, with no to."},
+ {bad:"She is going to speaks at the conference.",fix:"She is going to speak at the conference.",why:"After going to the verb is in the base form: to speak."},
+ {bad:"A: I forgot my wallet. B: Don't worry, I'm going to pay.",fix:"A: I forgot my wallet. B: Don't worry, I'll pay.",why:"This is a quick decision at the moment of speaking, so we use will.",alt:["A: I forgot my wallet. B: Don't worry, I will pay."]},
+ {bad:"Will you going to apply?",fix:"Are you going to apply?",why:"Don't mix will and going to. Choose one: Are you going to apply? or Will you apply?",alt:["Will you apply?"]}
+];
+const CATS_A=[
+ ["Work",["In ten years I'll probably be working as ... or something.","Next year I'm going to ...","I don't think I'll still ..."]],
+ ["Life",["Where will you live in ten years?","What are you doing next weekend, and what are you going to do next summer?","I'm sort of hoping to ..."]],
+ ["Skills and free time",["What are you going to learn in the next two years?","I'm definitely going to ... , kind of seriously.","I'll never ... , things like that."]]
+];
+const CATS_B=[
+ ["Work",["By 2030 AI will ..., I think.","More and more people are going to ...","I don't think companies will ..."]],
+ ["Your country and city",["By 2030 my city will be ...-ish.","I'm sure Ukraine will ...","People are going to ..., things like that."]],
+ ["Happiness",["Young people won't ... because of social media, I guess.","The happiest countries will probably ...","We will be happier if ..., or something."]]
+];
+const GAME=["AI at work","A four-day week in your company","Your city in 2030","Social media and young people","The cost of living","Learning English in 2030","Ukraine in 2030","Remote work","Cars and public transport","Your own career in IT"];
+const CAN=["I can say what I'm doing next week with the present continuous.","I can say my plans and make a prediction with evidence with going to.","I can give my opinion about the future with will and won't.","I can use vague language: kind of, sort of, like, things like that, or something, -ish.","I can use some new words: workload, safety net, trade-off, resilience, perks."];
+const SRCS=[
+ ["World Happiness Report 2026: top 10 and scores (India TV News summary)","https://www.indiatvnews.com/news/world/world-happiness-report-2026-which-are-the-top-10-happiest-nations-and-where-does-india-rank-check-list-here-2026-03-20-1034424"],
+ ["Residents and experts in the top countries (Kabar, reporting BBC, March 2026)","https://en.kabar.kg/news/the-worlds-happiest-countries-for-2026-and-what-they-get-right/"],
+ ["Finland first for the ninth year, English-speaking countries (Onmanorama)","https://www.onmanorama.com/upsc/current-affairs/2026/03/25/finland-happiest-country-for-9th-year-in-a-row.amp.html"],
+ ["Ukraine 111th in 2026 (UNN)","https://unn.ua/en/amp/ukraine-again-ranked-111th-in-the-global-happiness-index-finland-is-first-for-the-ninth-time-in-a-row"],
+ ["Future of Jobs Report 2025 (World Economic Forum)","https://www.weforum.org/stories/jobs-and-the-future-of-work/future-of-jobs-report-2025-jobs-of-the-future-and-the-skills-you-need-to-get-them/"],
+ ["UK four-day week pilot 2022 (Personnel Today)","https://www.personneltoday.com/?p=301976"],
+ ["UK four-day week pilot, 17 companies in 2025 (4dayweek.io, the organisers' claim)","https://4dayweek.io/country/united-kingdom"]
+];
+
+/* ---------- teacher notes ---------- */
+const NOTES={
+ home:["5 min. Homework first. I could not check her answers in the tracker (the database was paused), so ask her directly and look at the homework page together if you want.","Words from last lesson: she says the meaning and makes her own sentence. Press Show meaning only after she tries. Don't spend more than 3 minutes. If a word is weak, mark it and bring it back in the final speaking."],
+ guess:["5 min. Let her guess for a minute (she can write them on paper). Then reveal from 10 to 1: it builds some suspense.","After the reveal, ask the three questions in order. The Ukraine question is optional and personal: she decides how much to say. If she prefers, say only that countries in war have lower scores.","Facts here are real (World Happiness Report 2026). Scores are life evaluations on a scale from 0 to 10."],
+ words:["4 min. Matching. If she is stuck, press Give a hint. Don't explain the words yet: they come back in the cards.","Hustle culture is not here: she meets it in the text and in card 2 (the meaning: the idea that you must work non-stop to succeed).","Pronunciation to listen for: workload /ˈwɜːkləʊd/, resilience /rɪˈzɪliəns/, perks, fulfilling /fʊlˈfɪlɪŋ/, affordable /əˈfɔːdəbl/."],
+ cards:["12 min. All eight cards, one by one. Read cards: she sees the country, you turn the card, she reads the text. Listen cards: you press Listen (the text is hidden), she says what she heard, then Show the text. Always ask: do you agree? Why? Don't correct every mistake: write down two or three.","The voices are imagined, built on what residents and experts said in the 2026 reports (BBC). They are not quotes. The vague language in yellow is the same language the table on the Practice screen uses.","Vague language is in yellow, new words in mint. You can switch both off if you want her to find them herself.","If time is short, skip the second Denmark and Iceland voices."],
+ prac:["5 min. Start with the table and explain each row. Tap Show for a row, read the example, ask her for another example.","Exercise A: words from the cards (same sentences). Exercise B: she chooses a vague expression for each gap. Several answers can work (for example 'kind of' and 'sort of'). Explain why: a few are close in meaning.","Tip: ask her to say each sentence aloud again with real intonation."],
+ text:["5 min. First listening: text hidden (she hears it with the browser voice). Ask: what is one number you remember? Then show the text.","Turn the colours on in the legend only when you start the grammar: orange will, blue going to. First, let her say what she notices.","I label the facts (past or present) and the guesses (will, going to). The final sentences are our guess, not the researchers' prediction. Say it clearly to her.","No recording of a real speaker is on this page. If you find a short talk you like, use it as an extra."],
+ gram:["6 min. This is the explanation screen: you explain which form for which job (three boxes at the top). Then the forms, then the contrast box. Short.","Then the Find them in the text questions, then exercise C (choose the form) and D (mistakes). Typical mistakes at B1+: will + to, going to + verb-s, will + going to together, will for arrangements.","The key idea: do I see evidence or a plan (going to), or is it my opinion (will)? And is it in the calendar (present continuous)?"],
+ final:["8 min or more. Part A: she predicts her own future (ten years). Part B: the world around her. Starters include vague language. Part C: the game. Round 1 you predict her life (You're going to ... this weekend). Round 2 she predicts the world with will and won't, and you ask Why do you think so?","Write two or three mistakes (and one nice sentence) for the last two minutes.","Homework idea: a one-minute voice message with three predictions for 2030 and two plans for next year. Use vague language at least three times and two new words. I will build it after the lesson, if you want."]
+};
+const SCREENS=[{id:'home',label:'Warm-up'},{id:'guess',label:'Happiest'},{id:'words',label:'Words'},{id:'cards',label:'Cards'},{id:'prac',label:'Practice'},{id:'text',label:'2030'},{id:'gram',label:'Future'},{id:'final',label:'Predict'}];
+let teacher=/[?&]teacher\b/.test(location.search)||/^#teacher/i.test(location.hash), cur=0;
+
+/* ---------- audio ---------- */
+const synth=window.speechSynthesis;
+let voices=[], auto=null, run=0;
+const SPEEDS={slow:0.85,normal:1.0,fast:1.15};
+let cfg={vS:'',speed:'normal'};
+try{const s=JSON.parse(localStorage.getItem('hc-voices')||'null');if(s)cfg=Object.assign(cfg,s);}catch(e){}
+const saveCfg=()=>{try{localStorage.setItem('hc-voices',JSON.stringify(cfg));}catch(e){}};
+const FEM=/aria|jenny|michelle|ana\b|emma|sonia|libby|maisie|natasha|clara|samantha|karen|moira|tessa|serena|fiona|victoria|allison|ava|susan|zira|hazel|catherine|female|kate|stephanie|nicky|joana|zoe/i;
+const PREF_F=[/jenny/i,/aria/i,/sonia/i,/libby/i,/michelle/i,/emma/i,/ava\b/i,/samantha/i,/karen/i,/serena/i,/female/i,/zira/i];
+const prefBonus=(v,l)=>{const i=l.findIndex(r=>r.test(v.name||''));return i<0?0:(l.length-i)/l.length*6;};
+function voiceScore(v){let s=0,n=v.name||'';if(/natural/i.test(n))s+=8;if(/online/i.test(n))s+=4;if(/neural|premium|enhanced/i.test(n))s+=5;if(/google/i.test(n))s+=3;if(/compact|espeak|robot|whisper|zarvox|bad news|bells|boing|cellos|trinoids|organ|albert|bubbles|deranged|good news|hysterical|jester|junior|kathy|princess|ralph|superstar/i.test(n))s-=20;if(/en[-_](US|GB)/i.test(v.lang))s+=1;if(v.localService===false)s+=1;return s;}
+function loadVoices(){
+  if(!synth) return;
+  voices=(synth.getVoices()||[]).filter(v=>/^en/i.test(v.lang));
+  const sc=v=>voiceScore(v)+prefBonus(v,PREF_F)+(FEM.test(v.name||'')?3:0);
+  auto=voices.slice().sort((a,b)=>sc(b)-sc(a))[0]||null;
+  refreshVoiceSelects();
+}
+function refreshVoiceSelects(){
+  const opts='<option value="">Automatic</option>'+voices.slice().sort((a,b)=>(voiceScore(b)+prefBonus(b,PREF_F))-(voiceScore(a)+prefBonus(a,PREF_F))).map(v=>`<option value="${esc(v.voiceURI)}"${v.voiceURI===cfg.vS?' selected':''}>${esc(v.name+' ('+v.lang+')')}</option>`).join('');
+  $$('.vs-s').forEach(s=>{s.innerHTML=opts;});
+  $$('.vs-r').forEach(s=>{s.value=cfg.speed;});
+}
+$('#voicePanel').innerHTML=`<details class="vset"><summary>Voice and speed</summary>
+  <div class="vrow"><label>Voice <select class="vs-s"></select></label><button type="button" class="mini vt">Test</button></div>
+  <div class="vrow"><label>Speed <select class="vs-r"><option value="slow">Slow</option><option value="normal">Normal</option><option value="fast">Fast</option></select></label></div>
+  <p class="small" style="margin:6px 0 0">Your choice is remembered in this browser. Natural-sounding voices (Microsoft "Natural" voices such as Jenny or Aria) are often available in Edge.</p></details>`;
+document.addEventListener('change',e=>{
+  const c=e.target.classList;
+  if(c.contains('vs-s')){cfg.vS=e.target.value;} else if(c.contains('vs-r')){cfg.speed=e.target.value;} else return;
+  saveCfg(); refreshVoiceSelects();
+});
+document.addEventListener('click',e=>{const b=e.target.closest('.vt');if(!b)return;stopAll();playQueue([{text:"Hello! Let's look at the numbers. Really? That's surprising."}],null);});
+function voiceFor(){if(cfg.vS){const v=voices.find(x=>x.voiceURI===cfg.vS);if(v)return v;}return auto;}
+function setBtn(b,on){if(!b)return;b.setAttribute('aria-pressed',on?'true':'false');const l=b.querySelector('.lbl');if(l)l.textContent=on?(b.dataset.stop||'Stop'):(b.dataset.go||'Listen');}
+function clearActive(){$$('.now').forEach(e=>e.classList.remove('now'));$$('[aria-pressed="true"][data-audio]').forEach(b=>setBtn(b,false));}
+function stopAll(){run++;if(synth)synth.cancel();clearActive();}
+function chunks(text){const p=text.replace(/\.\.\./g,'…').split(/(?<=[.!?…])\s+/).filter(Boolean);return p.length?p:[text];}
+function prosody(c){const w=c.trim().split(/\s+/).length,end=c.trim().slice(-1);
+  if(end==='!') return {pitch:w<=3?0.2:0.12,rate:1.04};
+  if(end==='?') return {pitch:w<=3?0.15:0.06,rate:1.0};
+  return {pitch:0,rate:1};}
+function playQueue(items,btn){
+  if(!synth) return;
+  stopAll(); const my=run; setBtn(btn,true); let i=0;
+  const nextItem=()=>{
+    if(my!==run) return;
+    if(i>=items.length){clearActive();return;}
+    const it=items[i++];
+    $$('.now').forEach(e=>e.classList.remove('now')); if(it.el) it.el.classList.add('now');
+    const cs=chunks(it.text); let k=0;
+    const nextChunk=()=>{
+      if(my!==run) return;
+      if(k>=cs.length){setTimeout(nextItem,260);return;}
+      const c=cs[k++], pr=prosody(c), u=new SpeechSynthesisUtterance(c);
+      const v=voiceFor(); if(v){u.voice=v;u.lang=v.lang;}else u.lang='en-US';
+      u.rate=Math.min(2,SPEEDS[cfg.speed]*pr.rate); u.pitch=Math.max(0.1,Math.min(2,1+pr.pitch));
+      u.onend=()=>setTimeout(nextChunk,k<cs.length?60:0);
+      u.onerror=ev=>{if(my===run&&ev.error!=='canceled'&&ev.error!=='interrupted')clearActive();};
+      window.__utterance=u;
+      try{synth.resume();}catch(e){}
+      synth.speak(u);
+    };
+    nextChunk();
+  };
+  setTimeout(nextItem,80);
+}
+function speakOne(text,btn){
+  if(btn&&btn.getAttribute('aria-pressed')==='true'){stopAll();return;}
+  playQueue([{el:null,text}],btn);
+}
+function audioBtn(label,attrs){return `<button type="button" class="mini" data-audio ${attrs} aria-pressed="false" aria-label="${label}">${ICON_SPK}${ICON_STOP}<span class="lbl">Listen</span></button>`;}
+$('#playText').insertAdjacentHTML('afterbegin',ICON_SPK+ICON_STOP);
+$('#novoice').hidden=!!synth;
+if(synth){loadVoices();if(typeof synth.addEventListener==='function')synth.addEventListener('voiceschanged',loadVoices);setTimeout(loadVoices,1500);}
+
+/* ---------- screen 1: old words ---------- */
+function qaList(id,items,btnLabel){
+  $('#'+id).innerHTML=items.map((it,i)=>`<li><p class="q">${mk(it[0])}</p><p style="margin:10px 0 0"><button type="button" class="mini" data-qa="${id}-${i}" aria-expanded="false">${btnLabel||'Show answer'}</button></p><p class="a" id="${id}-${i}" hidden>${mk(it[1])}</p></li>`).join('');
+  $('#'+id).addEventListener('click',e=>{const b=e.target.closest('[data-qa]');if(!b)return;const a=$('#'+b.dataset.qa);a.hidden=!a.hidden;b.textContent=a.hidden?(btnLabel||'Show answer'):'Hide';b.setAttribute('aria-expanded',a.hidden?'false':'true');});
+}
+(function(){
+  const root=$('#oldWords');
+  root.innerHTML=OLD.map((o,i)=>`<li><button type="button" class="flip" data-f="${i}" aria-pressed="false" aria-label="Card ${i+1}, tap to turn"><span class="ff"><span class="tag2">Which word or phrase?</span>${apo(o[0])}</span><span class="fb" hidden><span class="tag2">The word</span><b>${apo(o[1])}</b><span class="ex2">${apo(o[2])}</span></span></button></li>`).join('');
+  root.addEventListener('click',e=>{const b=e.target.closest('.flip');if(!b)return;const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');$('.ff',b).hidden=on;$('.fb',b).hidden=!on;});
+})();
+qaList('guessQA',GUESS_QA);
+qaList('textQA',TEXT_QA);
+qaList('gramQA',GRAM_QA);
+
+/* ---------- screen 2: reveal the top 10 ---------- */
+(function(){
+  const body=$('#top10 tbody'); let shown=0;
+  body.innerHTML=TOP10.map((r,i)=>`<tr data-r="${i}" hidden><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  const upd=()=>{$$('tr',body).forEach((tr,i)=>{tr.hidden=!(i>=TOP10.length-shown);});$('#revNext').disabled=shown>=TOP10.length;};
+  $('#revNext').addEventListener('click',()=>{shown=Math.min(TOP10.length,shown+1);upd();});
+  $('#revAll').addEventListener('click',()=>{shown=TOP10.length;upd();});
+  $('#revReset').addEventListener('click',()=>{shown=0;upd();});
+  upd();
+})();
+
+/* ---------- screen 3: matching ---------- */
+(function(){
+  const root=$('#matcher'); let selW=null, selE=null, done=new Set();
+  root.innerHTML=`<div class="mstat"><span class="chip" id="mCount">0 of ${PAIRS.length} matched</span><span><button type="button" class="btn" id="mHint">Give a hint</button> <button type="button" class="btn" id="mReset">Start again</button></span></div>
+   <div class="match"><div class="mcol" id="mW">${W_ORDER.map(i=>`<button type="button" class="mbtn mw" data-i="${i}">${apo(PAIRS[i][0])}</button>`).join('')}</div>
+   <div class="mcol" id="mE">${E_ORDER.map(i=>`<button type="button" class="mbtn me" data-i="${i}">${apo(PAIRS[i][1])}</button>`).join('')}</div></div>
+   <p class="chip ok" id="mDone" hidden style="margin-top:14px">All matched! Well done.</p>`;
+  const btn=(c,i)=>$(`#${c} [data-i="${i}"]`,root);
+  function clearSel(){$$('.sel',root).forEach(b=>b.classList.remove('sel'));selW=selE=null;}
+  function clearHint(){$$('.hint',root).forEach(b=>b.classList.remove('hint'));}
+  function tryMatch(){
+    if(selW===null||selE===null) return;
+    const w=btn('mW',selW), e=btn('mE',selE);
+    if(selW===selE){w.classList.remove('sel');e.classList.remove('sel');w.classList.add('ok');e.classList.add('ok');w.disabled=e.disabled=true;done.add(selW);clearHint();
+      $('#mCount').textContent=`${done.size} of ${PAIRS.length} matched`; if(done.size===PAIRS.length) $('#mDone').hidden=false;
+      selW=selE=null;}
+    else{w.classList.add('bad');e.classList.add('bad');const a=w,b=e;clearSel();setTimeout(()=>{a.classList.remove('bad');b.classList.remove('bad');},650);}
+  }
+  $('#mW',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('#mW .sel',root).forEach(x=>x.classList.remove('sel'));selW=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('#mE',root).addEventListener('click',ev=>{const b=ev.target.closest('.mbtn');if(!b||b.disabled)return;$$('#mE .sel',root).forEach(x=>x.classList.remove('sel'));selE=+b.dataset.i;b.classList.add('sel');tryMatch();});
+  $('#mHint',root).addEventListener('click',()=>{clearHint();const i=W_ORDER.find(k=>!done.has(k));if(i===undefined)return;btn('mW',i).classList.add('hint');btn('mE',i).classList.add('hint');});
+  $('#mReset',root).addEventListener('click',()=>{done.clear();clearSel();clearHint();$$('.mbtn',root).forEach(b=>{b.disabled=false;b.classList.remove('ok','bad','sel','hint');});$('#mCount').textContent=`0 of ${PAIRS.length} matched`;$('#mDone').hidden=true;});
+})();
+
+/* ---------- screen 4: cards ---------- */
+(function(){
+  const root=$('#cardDeck'); let i=0;
+  root.innerHTML=`<div class="deckbar"><span class="cnt"></span><div class="dots">${CARDS.map(()=>'<i></i>').join('')}</div></div>
+   <div class="card ccard" id="ccard"></div>
+   <div class="controls"><button type="button" class="btn prev">← Previous card</button><button type="button" class="btn primary next">Next card →</button></div>`;
+  const draw=()=>{
+    const c=CARDS[i], L=c.mode==='listen';
+    $('#ccard').innerHTML=`<p class="who2"><b style="font-size:1.6rem">${apo(c.country)}</b> <span class="chip ${L?'':'plain'}">${L?'Listen':'Read'}</span></p>
+     ${L?`<p style="margin:0 0 14px">${audioBtn('Listen to the voice','data-cardsay="1"')}</p>`:''}
+     <p style="margin:0 0 14px"><button type="button" class="mini" id="rtBtn" aria-expanded="false">${L?'Show the text':'Turn the card'}</button></p>
+     <div id="rtBox" hidden><p class="idea">${mk(c.text)}</p>${L?'':`<p style="margin:0 0 14px">${audioBtn('Listen to the voice','data-cardsay="1"')}</p>`}</div>
+     <ul class="qlist qsmall">${c.qs.map(q=>`<li>${apo(q)}</li>`).join('')}</ul>`;
+    $('.cnt',root).textContent=`Card ${i+1} of ${CARDS.length}`;
+    $$('.dots i',root).forEach((d,k)=>d.classList.toggle('on',k===i));
+    $('#rtBtn').addEventListener('click',e=>{const b=e.currentTarget,box=$('#rtBox');box.hidden=!box.hidden;b.textContent=box.hidden?(L?'Show the text':'Turn the card'):(L?'Hide the text':'Turn it back');b.setAttribute('aria-expanded',box.hidden?'false':'true');});
+    $$('[data-cardsay]').forEach(b=>b.addEventListener('click',()=>speakOne(strip(c.text),b)));
+  };
+  const go=d=>{stopAll();i=(i+d+CARDS.length)%CARDS.length;draw();};
+  $('.next',root).addEventListener('click',()=>go(1)); $('.prev',root).addEventListener('click',()=>go(-1));
+  draw();
+  $('#showVague').addEventListener('change',e=>$('#app').classList.toggle('hl-g',e.target.checked));
+  $('#showVocab').addEventListener('change',e=>$('#app').classList.toggle('hl-w',e.target.checked));
+})();
+
+/* ---------- screen 5: vague table and exercises ---------- */
+(function(){
+  const body=$('#vagueRows');
+  body.innerHTML=VAGUE.map((r,i)=>`<tr><td style="font-weight:700;white-space:nowrap">${apo(r[0])}</td><td colspan="2" data-v="${i}"><button type="button" class="mini" data-vshow="${i}">Show</button></td></tr>`).join('');
+  const open=i=>{const cell=$(`[data-v="${i}"]`);if(!cell)return;cell.removeAttribute('colspan');cell.outerHTML=`<td class="pat">${apo(VAGUE[i][1])}</td><td class="ex">${mk(VAGUE[i][2])}</td>`;};
+  body.addEventListener('click',e=>{const b=e.target.closest('[data-vshow]');if(b)open(+b.dataset.vshow);});
+  $('#vagueAll').addEventListener('click',e=>{VAGUE.forEach((_,i)=>open(i));e.currentTarget.hidden=true;});
+})();
+$('#bankA').textContent=BANK_A;
+const SYN=[['kind of','sort of'],['things like that','stuff like that'],['or something like that','or something']];
+const eq=(a,b)=>{a=norm(a);b=norm(b);return a===b||SYN.some(p=>p.includes(a)&&p.includes(b));};
+function gapList(rootId,data,withHint){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>{
+    let k=0;
+    const text=apo(it.s).replace(/\[\[(.+?)\]\]/g,(m,a)=>`<input class="gap" data-i="${i}" data-k="${k++}" type="text" size="${Math.max(5,a.length+1)}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap ${k} of sentence ${i+1}">`);
+    return `<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><p class="gl-text">${text}${it.h?`<span class="h">(${it.h})</span>`:''}</p></div>
+     <div class="gl-meta">${audioBtn('Listen to sentence '+(i+1),`data-say="${esc(strip(it.s))}"`)}<button type="button" class="mini" data-check="${i}">Check</button><button type="button" class="mini" data-show="${i}">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div></li>`;
+  }).join('');
+  const inputs=i=>$$(`input[data-i="${i}"]`,root);
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-check]');
+    if(c){const i=+c.dataset.check, ans=answersOf(data[i].s); let good=0;
+      inputs(i).forEach((inp,k)=>{const ok=eq(inp.value,ans[k]);inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&inp.value.trim()!=='');if(ok)good++;});
+      $('#'+rootId+'-res'+i).textContent=good===ans.length?'All correct':`${good} of ${ans.length} correct`;return;}
+    const s=e.target.closest('[data-show]');
+    if(s){const i=+s.dataset.show, ans=answersOf(data[i].s);inputs(i).forEach((inp,k)=>{inp.value=ans[k];inp.classList.add('ok');inp.classList.remove('bad');});$('#'+rootId+'-res'+i).textContent='';}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('gap')){$('[data-check]',e.target.closest('.gl')).click();}});
+}
+function fixList(rootId,data){
+  const root=$('#'+rootId);
+  root.innerHTML=data.map((it,i)=>`<li class="gl"><div class="gl-main"><span class="num">${i+1}</span><div style="flex:1"><p class="bad-s">${apo(it.bad)}</p>
+     <input class="wide" data-b="${i}" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write the correct sentence" aria-label="Correct sentence ${i+1}"></div></div>
+     <div class="gl-meta">${audioBtn('Listen to the correct sentence '+(i+1),`data-say="${esc(it.fix)}"`)}<button type="button" class="mini" data-bcheck="${i}">Check</button><button type="button" class="mini" data-bshow="${i}" aria-expanded="false">Show answer</button><span class="res" id="${rootId}-res${i}"></span></div>
+     <div class="answer" id="${rootId}-ans${i}" hidden><p class="fix"><strong>Correct:</strong> ${apo(it.fix)}</p><p class="why">${apo(it.why)}</p></div></li>`).join('');
+  root.addEventListener('click',e=>{
+    const c=e.target.closest('[data-bcheck]');
+    if(c){const i=+c.dataset.bcheck, inp=$(`[data-b="${i}"]`,root), v=norm(inp.value), it=data[i];
+      const ok=[it.fix].concat(it.alt||[]).some(f=>norm(f)===v);
+      inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok&&v!=='');$('#'+rootId+'-res'+i).textContent=ok?'Correct':'Not yet. Try again or show the answer.';return;}
+    const s=e.target.closest('[data-bshow]');
+    if(s){const i=+s.dataset.bshow, box=$('#'+rootId+'-ans'+i), op=box.hidden;box.hidden=!op;s.textContent=op?'Hide answer':'Show answer';s.setAttribute('aria-expanded',op?'true':'false');}
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('wide'))$('[data-bcheck]',e.target.closest('.gl')).click();});
+}
+gapList('exA',EX_A); gapList('exB',EX_B); gapList('exC',EX_C); fixList('exD',EX_D);
+
+/* ---------- screen 6: the text ---------- */
+(function(){
+  const root=$('#theText');
+  root.innerHTML=TEXT.map((p,i)=>`<div class="dl tp" data-i="${i}"><div class="bub" style="max-width:100%;width:100%"><span class="lt">${mk(p)}</span></div></div>`).join('');
+  const items=from=>$$('.dl',root).slice(from||0).map(el=>({el,text:strip(TEXT[+el.dataset.i])}));
+  $('#playText').addEventListener('click',e=>{const b=e.currentTarget;if(b.getAttribute('aria-pressed')==='true'){stopAll();return;}playQueue(items(0),b);});
+  root.addEventListener('click',e=>{const d=e.target.closest('.dl');if(!d)return;playQueue(items(+d.dataset.i),$('#playText'));});
+  $('#showTextBox').addEventListener('change',e=>root.classList.toggle('hide-text',!e.target.checked));
+  $('#showForms').addEventListener('change',e=>{$('#app').classList.toggle('hl-c',e.target.checked);$('#app').classList.toggle('hl-f',e.target.checked);});
+})();
+
+/* ---------- screen 7: grammar ---------- */
+$('#jobs').innerHTML=JOBS.map(j=>`<div class="box"><span class="cap">${apo(j.t)}</span><p class="big" style="font-size:1.35rem">${apo(j.big)}</p><p style="margin:0">${apo(j.d)}</p></div>`).join('');
+$('#gcards').innerHTML=GRAM.map((g,gi)=>`<div class="gcard"><h3>${apo(g.title)}</h3><p class="use">${apo(g.use)}</p>
+  <div style="overflow-x:auto"><table class="conj"><thead><tr><th>Type</th><th>Pattern</th><th>Examples</th></tr></thead><tbody>
+  ${g.rows.map((r,ri)=>`<tr><td>${r[0]}</td><td colspan="2" data-rev="${gi}-${ri}"><button type="button" class="mini" data-show-row="${gi}-${ri}">Show</button></td></tr>`).join('')}
+  </tbody></table></div>
+  <p style="margin:12px 0 0"><button type="button" class="mini" data-show-all="${gi}">Show all</button></p>
+  <p class="note" data-note="${gi}" hidden><b>Remember:</b> ${apo(g.note)}</p></div>`).join('');
+function revealRow(key){
+  const [gi,ri]=key.split('-').map(Number), r=GRAM[gi].rows[ri], cell=$(`[data-rev="${key}"]`);
+  cell.removeAttribute('colspan');
+  cell.outerHTML=`<td class="pat">${mk(r[1])}</td><td class="ex">${r[2].map(x=>`<div>${mk(x)}</div>`).join('')}</td>`;
+}
+$('#gcards').addEventListener('click',e=>{
+  const b=e.target.closest('[data-show-row]'); if(b){revealRow(b.dataset.showRow);return;}
+  const a=e.target.closest('[data-show-all]'); if(a){const gi=+a.dataset.showAll;GRAM[gi].rows.forEach((r,ri)=>{if($(`[data-rev="${gi}-${ri}"]`))revealRow(`${gi}-${ri}`);});$(`[data-note="${gi}"]`).hidden=false;a.hidden=true;}
+});
+
+/* ---------- screen 8: speaking ---------- */
+const catsHTML=c=>c.map(x=>`<div class="cat"><h3>${x[0]}</h3>${x[1].map(q=>`<button type="button">${apo(q)}</button>`).join('')}</div>`).join('');
+$('#catsA').innerHTML=catsHTML(CATS_A); $('#catsB').innerHTML=catsHTML(CATS_B);
+['#catsA','#catsB'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const was=b.classList.contains('on');$$('button',b.parentElement).forEach(x=>x.classList.remove('on'));if(!was)b.classList.add('on');}));
+let gi=-1; $('#gameBtn').addEventListener('click',()=>{let n;do{n=Math.floor(Math.random()*GAME.length);}while(n===gi&&GAME.length>1);gi=n;$('#gameTopic').textContent=GAME[n];});
+$('#checks').innerHTML=CAN.map(c=>`<li><label><input type="checkbox"> ${apo(c)}</label></li>`).join('');
+$('#srcs').innerHTML=SRCS.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener">${apo(s[0])}</a></li>`).join('');
+
+/* ---------- global audio clicks ---------- */
+document.addEventListener('click',e=>{
+  const sb=e.target.closest('[data-say]'); if(sb){speakOne(sb.dataset.say,sb);}
+});
+
+/* ---------- screens, notes, sync between windows ---------- */
+let chan=null; try{ if('BroadcastChannel' in window) chan=new BroadcastChannel('happiest-countries-lesson'); }catch(e){ chan=null; }
+$('#steps').innerHTML=SCREENS.map((s,i)=>`<li><button type="button" data-go="${i}"><span class="n">${i+1}</span>${s.label}</button></li>`).join('');
+function drawNotes(){
+  $$('.tnote').forEach(n=>n.remove()); $$('.tbadge').forEach(n=>n.remove());
+  if(!teacher) return;
+  SCREENS.forEach(s=>{const sec=$('#s-'+s.id);const h=document.createElement('div');h.className='tnote';
+    h.innerHTML=`<b class="t">Teacher notes. Not for the student.</b><ul>${NOTES[s.id].map(n=>`<li>${apo(n)}</li>`).join('')}</ul>${s.id==='final'?'<textarea aria-label="Top mistakes" placeholder="Mistakes and nice sentences from this lesson (stays in this window only)"></textarea>':''}`;
+    sec.prepend(h);});
+  const b=document.createElement('div');b.className='tbadge';b.textContent='Teacher window';document.body.appendChild(b);
+}
+function go(i,fromSync){
+  stopAll(); cur=Math.max(0,Math.min(SCREENS.length-1,i));
+  SCREENS.forEach((s,k)=>{$('#s-'+s.id).hidden=k!==cur;});
+  $$('#steps button').forEach((b,k)=>{if(k===cur)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  $('#prevScreen').disabled=cur===0; $('#nextScreen').disabled=cur===SCREENS.length-1;
+  $('#nextScreen').textContent=cur<SCREENS.length-1?`Next: ${SCREENS[cur+1].label} →`:'The end';
+  $('#prevScreen').textContent=cur>0?`← ${SCREENS[cur-1].label}`:'← Back';
+  if(!fromSync){try{history.replaceState(null,'','#'+(teacher?'teacher-':'')+(cur+1));}catch(e){} if(chan)chan.postMessage({screen:cur});}
+  window.scrollTo(0,0);
+}
+if(chan) chan.onmessage=e=>{if(e.data&&typeof e.data.screen==='number')go(e.data.screen,true);};
+$('#steps').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go);});
+$('#prevScreen').addEventListener('click',()=>go(cur-1));
+$('#nextScreen').addEventListener('click',()=>go(cur+1));
+document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||'')) return;
+  if(e.key==='ArrowRight'){go(cur+1);} else if(e.key==='ArrowLeft'){go(cur-1);}
+});
+window.addEventListener('pagehide',stopAll);
+drawNotes();
+{const m=(location.hash||'').match(/(\d+)$/); go((m?parseInt(m[1],10):1)-1,true);}
+</script>
+</body>
+</html>
